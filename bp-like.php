@@ -4,12 +4,12 @@ Plugin Name: BuddyPress Like
 Plugin URI: http://bp_like.wordpress.com
 Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 Author: Alex Hempton-Smith
-Version: 0.0.1
+Version: 0.0.2
 Author URI: http://www.alexhemptonsmith.com
 */
 
 define ( 'BP_LIKE_IS_INSTALLED', 1 );
-define ( 'BP_LIKE_VERSION', '0.0.1' );
+define ( 'BP_LIKE_VERSION', '0.0.2' );
 define ( 'BP_LIKE_DB_VERSION', '1' );
 
 /**
@@ -29,6 +29,7 @@ function bp_like_install() {
  * of the component. If it matches, it will run the installation function.
  */
 function bp_like_check_installed() {
+	global $wpdb;
 
 	if ( !is_site_admin() )
 		return false;
@@ -36,6 +37,11 @@ function bp_like_check_installed() {
 	if ( get_site_option('bp-like-db-version') < BP_LIKE_DB_VERSION )
 		bp_like_install();
 
+	/* They have been using a pre-release version, nuke the data */
+	if ( !get_site_option('bp-like-db-version') ) {
+		$wpdb->query("DELETE FROM $wpdb->bp_activity_meta WHERE meta_key = 'liked_count'");
+		$wpdb->query("DELETE FROM $wpdb->usermeta WHERE meta_key = 'liked_activities'");
+	};
 }
 add_action( 'admin_menu', 'bp_like_check_installed' );
 
