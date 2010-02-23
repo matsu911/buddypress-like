@@ -1,35 +1,66 @@
 <?php
 /*
 Plugin Name: BuddyPress Like
-Plugin URI: http://bplike.wordpress.com
+Plugin URI: http://bp_like.wordpress.com
 Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 Author: Alex Hempton-Smith
 Version: 0.0.1
 Author URI: http://www.alexhemptonsmith.com
 */
 
-function bplike_process_ajax() {
+define ( 'BP_LIKE_IS_INSTALLED', 1 );
+define ( 'BP_LIKE_VERSION', '0.0.1' );
+define ( 'BP_LIKE_DB_VERSION', '1' );
+
+/**
+ * bp_like_install()
+ *
+ * Installs and/or upgrades the database content
+ * NB: Not used yet, might be useful later on
+ */
+function bp_like_install() {
+	update_site_option( 'bp-like-db-version', BP_LIKE_DB_VERSION );
+}
+
+/**
+ * bp_like_check_installed()
+ *
+ * Checks to see if the DB tables exist or if you are running an old version
+ * of the component. If it matches, it will run the installation function.
+ */
+function bp_like_check_installed() {
+
+	if ( !is_site_admin() )
+		return false;
+
+	if ( get_site_option('bp-like-db-version') < BP_LIKE_DB_VERSION )
+		bp_like_install();
+
+}
+add_action( 'admin_menu', 'bp_like_check_installed' );
+
+function bp_like_process_ajax() {
   if ( isset( $_POST['type'] ) ) {
-    add_action( 'wp', 'bplike_process_activity_like' );
+    add_action( 'wp', 'bp_like_process_activity_like' );
   }
 }
-add_action('init', 'bplike_process_ajax');
+add_action('init', 'bp_like_process_ajax');
 
-function bplike_process_activity_like() {
+function bp_like_process_activity_like() {
 
 	if ( $_POST['type'] == 'like' )
-		bplike_activity_add_user_like( (int) str_replace( 'like-activity-', '', $_POST['id'] ) );
+		bp_like_activity_add_user_like( (int) str_replace( 'like-activity-', '', $_POST['id'] ) );
 	
 	if ( $_POST['type'] == 'unlike' )
-		bplike_activity_remove_user_like( (int) str_replace( 'unlike-activity-', '', $_POST['id'] ) );
+		bp_like_activity_remove_user_like( (int) str_replace( 'unlike-activity-', '', $_POST['id'] ) );
 
 	if ( $_POST['type'] == 'view-likes' )
-		bplike_activity_get_user_likes( (int) str_replace( 'view-likes-', '', $_POST['id'] ) );
+		bp_like_activity_get_user_likes( (int) str_replace( 'view-likes-', '', $_POST['id'] ) );
 
 	die();
 }
 
-function bplike_activity_add_user_like( $activity_id, $user_id = false ) {
+function bp_like_activity_add_user_like( $activity_id, $user_id = false ) {
 	global $bp;
 	
 	if (!$activity_id)
@@ -70,7 +101,7 @@ function bplike_activity_add_user_like( $activity_id, $user_id = false ) {
 		echo ' (' . $liked_count . ')';
 }
 
-function bplike_activity_remove_user_like( $activity_id, $user_id = false ) {
+function bp_like_activity_remove_user_like( $activity_id, $user_id = false ) {
 	global $bp;
 	
 	if ( !$activity_id )
@@ -100,7 +131,7 @@ function bplike_activity_remove_user_like( $activity_id, $user_id = false ) {
 		echo ' (' . $liked_count . ')';
 }
 
-function bplike_activity_get_user_likes( $activity_id, $user_id = false ) {
+function bp_like_activity_get_user_likes( $activity_id, $user_id = false ) {
 	global $bp;
 
 	if (!$activity_id)
@@ -123,7 +154,7 @@ function bplike_activity_get_user_likes( $activity_id, $user_id = false ) {
 
 }
 
-function bplike_get_activity_is_liked( $activity_id = false, $user_id = false ) {
+function bp_like_get_activity_is_liked( $activity_id = false, $user_id = false ) {
 	global $bp;
 
 	if (!$activity_id)
@@ -143,7 +174,7 @@ function bplike_get_activity_is_liked( $activity_id = false, $user_id = false ) 
 	};
 }
 
-function bplike_activity_button() {
+function bp_like_activity_button() {
 	$activity = bp_activity_get_specific( array( 'activity_ids' => bp_get_activity_id() ) );
 	$activity_type = $activity['activities'][0]->type;
 
@@ -152,7 +183,7 @@ function bplike_activity_button() {
 		$users_who_like = array_keys(bp_activity_get_meta( bp_get_activity_id(), 'liked_count' ));
 		$liked_count = count($users_who_like);
 	}
-		if ( !bplike_get_activity_is_liked() ) : ?>
+		if ( !bp_like_get_activity_is_liked() ) : ?>
 		<a href="" class="like" id="like-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Like this item', 'buddypress' ) ?>"><?php _e( 'Like', 'buddypress' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
 				<?php else : ?>
 		<a href="" class="unlike" id="unlike-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Unlike this item', 'buddypress' ) ?>"><?php _e( 'Unlike', 'buddypress' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
@@ -164,16 +195,16 @@ function bplike_activity_button() {
 		endif;
 	endif;
 };
-add_filter('bp_activity_entry_meta', 'bplike_activity_button');
+add_filter('bp_activity_entry_meta', 'bp_like_activity_button');
 
 /* Insert the Javascript */
-function bplike_list_scripts ( ) {
+function bp_like_list_scripts ( ) {
   wp_enqueue_script( "bp-like", path_join(WP_PLUGIN_URL, basename( dirname( __FILE__ ) )."/bp-like.min.js"), array( 'jquery' ) );
 }
-add_action('wp_print_scripts', 'bplike_list_scripts');
+add_action('wp_print_scripts', 'bp_like_list_scripts');
 
 /* Insert the CSS - a workaround until we can disable metadata on specific activities */
-function bplike_css() {
+function bp_like_css() {
 ?>
 <style type="text/css">
 	.bp-like.activity_liked .activity-meta, .bp-like.activity_liked a.view { display: none; }
@@ -181,4 +212,4 @@ function bplike_css() {
 </style>
 <?php	
 }
-add_action('wp_head', 'bplike_css');
+add_action('wp_head', 'bp_like_css');
