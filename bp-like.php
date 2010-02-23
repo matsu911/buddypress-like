@@ -40,7 +40,7 @@ function bp_like_check_installed() {
 	/* They have been using a pre-release version, nuke the data */
 	if ( !get_site_option('bp-like-db-version') ) {
 		$wpdb->query("DELETE FROM $wpdb->bp_activity_meta WHERE meta_key = 'liked_count'");
-		$wpdb->query("DELETE FROM $wpdb->usermeta WHERE meta_key = 'liked_activities'");
+		$wpdb->query("DELETE FROM $wpdb->usermeta WHERE meta_key = 'bp_liked_activities'");
 	};
 }
 add_action( 'admin_menu', 'bp_like_check_installed' );
