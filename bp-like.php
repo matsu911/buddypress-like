@@ -1,15 +1,25 @@
 <?php
 /*
 Plugin Name: BuddyPress Like
-Plugin URI: http://bp_like.wordpress.com
+Plugin URI: http://bplike.wordpress.com
 Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 Author: Alex Hempton-Smith
-Version: 0.0.2
+Version: 0.0.3
 Author URI: http://www.alexhemptonsmith.com
 */
 
+/*** Make sure BuddyPress is loaded ********************************/
+if ( !function_exists( 'bp_core_install' ) ) {
+	require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+	if ( is_plugin_active( 'buddypress/bp-loader.php' ) )
+		require_once ( WP_PLUGIN_DIR . '/buddypress/bp-loader.php' );
+	else
+		return;
+}
+/*******************************************************************/
+
 define ( 'BP_LIKE_IS_INSTALLED', 1 );
-define ( 'BP_LIKE_VERSION', '0.0.2' );
+define ( 'BP_LIKE_VERSION', '0.0.3' );
 define ( 'BP_LIKE_DB_VERSION', '1' );
 
 /**
@@ -46,14 +56,6 @@ function bp_like_check_installed() {
 add_action( 'admin_menu', 'bp_like_check_installed' );
 
 function bp_like_process_ajax() {
-  if ( isset( $_POST['type'] ) ) {
-    add_action( 'wp', 'bp_like_process_activity_like' );
-  }
-}
-add_action('init', 'bp_like_process_ajax');
-
-function bp_like_process_activity_like() {
-
 	if ( $_POST['type'] == 'like' )
 		bp_like_activity_add_user_like( (int) str_replace( 'like-activity-', '', $_POST['id'] ) );
 	
@@ -65,6 +67,7 @@ function bp_like_process_activity_like() {
 
 	die();
 }
+add_action( 'wp_ajax_activity_like', 'bp_like_process_ajax' );
 
 function bp_like_activity_add_user_like( $activity_id, $user_id = false ) {
 	global $bp;
@@ -208,6 +211,11 @@ function bp_like_list_scripts ( ) {
   wp_enqueue_script( "bp-like", path_join(WP_PLUGIN_URL, basename( dirname( __FILE__ ) )."/bp-like.min.js"), array( 'jquery' ) );
 }
 add_action('wp_print_scripts', 'bp_like_list_scripts');
+
+function bp_like_header_js() {
+	echo '<script type="text/javascript">var bplike_ajaxurl = "' . get_bloginfo('url') . '";</script>';
+}
+add_action('wp_head', 'bp_like_header_js');
 
 /* Insert the CSS - a workaround until we can disable metadata on specific activities */
 function bp_like_css() {

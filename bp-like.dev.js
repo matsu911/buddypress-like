@@ -6,8 +6,14 @@ jQuery(document).ready( function() {
 		
 		jQuery(this).addClass('loading');
 		
-		jQuery.post("/", { type: type, id: id },
-		function(data){
+		jQuery.post( ajaxurl, {
+			action: 'activity_like',
+			'cookie': encodeURIComponent(document.cookie),
+			'type': type,
+			'id': id
+		},
+		function(data) {
+			
 			jQuery('#' + id).removeClass('loading');
 			jQuery('#' + id).fadeOut( 100, function() {
 				jQuery(this).html(data);
@@ -21,6 +27,7 @@ jQuery(document).ready( function() {
 				var newID = id.replace("unlike", "like");
 				jQuery('#' + id).removeClass('unlike').addClass('like').attr('title', 'Like this item').attr('id', newID);
 			}
+
 		});
 		
 		return false;
@@ -35,8 +42,13 @@ jQuery(document).ready( function() {
 		
 		jQuery(this).addClass('loading');
 		
-		jQuery.post("/", { type: type, id: id },
-		function(data){
+		jQuery.post( ajaxurl, {
+			action: 'activity_like',
+			'cookie': encodeURIComponent(document.cookie),
+			'type': type,
+			'id': id
+		},
+		function(data) {
 
 			jQuery('#' + thisID).html('Hide likes').removeClass('loading');
 			jQuery('#' + parentID).html(data).fadeIn(100);

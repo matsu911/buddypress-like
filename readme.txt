@@ -3,7 +3,7 @@ Contributors: hempsworth
 Tags: buddypress, like, rate, thumbs
 Requires at least: 2.9.1
 Tested up to: 2.9.1
-Stable tag: 0.0.2
+Stable tag: 0.0.3
 
 Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 
