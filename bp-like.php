@@ -51,8 +51,8 @@ function bp_like_install() {
 function bp_like_upgrade_notice() {
 	if ( !is_site_admin() )
 		return false;
-	
-	echo '<div id="message" class="updated fade bp-like-upgraded"><p style="line-height: 150%"><strong>BuddyPress Like</strong> has been successfully upgraded to version ' . BP_LIKE_VERSION . '. <a href="#" style="float:right;">(Hide)</a></p></div><script type="text/javascript">jQuery(document).ready( function() { jQuery(".bp-like-upgraded a").click(function(){ jQuery(".bp-like-upgraded").fadeOut(); return false; }); });</script>';
+
+	echo '<div id="message" class="updated fade bp-like-upgraded"><p style="line-height: 150%"><strong>BuddyPress Like</strong> has been successfully upgraded to version ' . BP_LIKE_VERSION . '.</p></div>';
 }
 
 /**
@@ -133,7 +133,7 @@ function bp_like_activity_add_user_like( $activity_id, $user_id = false ) {
 		$user_id = $bp->loggedin_user->id;
 	
 	if ( $user_id == 0 ) {
-		echo 'You must be logged in.';
+		_e('You must be logged in.');
 		return false;
 	}
 	
@@ -427,17 +427,17 @@ add_action('bp_group_activity_filter_settings', 'bp_like_activity_filter');
  *
  */
 function bp_like_list_scripts() {
-  wp_enqueue_script( "bp-like", path_join(WP_PLUGIN_URL, basename( dirname( __FILE__ ) )."/_inc/bp-like.min.js"), array( 'jquery' ) );
+  wp_enqueue_script( "bp-like", path_join(WP_PLUGIN_URL, basename( dirname( __FILE__ ) )."/_inc/bp-like.dev.js"), array( 'jquery' ) );
 }
 add_action('wp_print_scripts', 'bp_like_list_scripts');
 
 /**
- * bp_like_insert_css()
+ * bp_like_insert_head()
  *
- * Includes any CSS needed in the <head>.
+ * Includes any CSS and/or Javascript needed in the <head>.
  *
  */
-function bp_like_insert_css() {
+function bp_like_insert_head() {
 ?>
 <style type="text/css">
 	.bp-like.activity_liked .activity-meta, .bp-like.activity_liked a.view, .users-who-like { display: none; }
@@ -458,9 +458,17 @@ function bp_like_insert_css() {
 	#bp-default .users-who-like a:hover { color: #222; }
 	
 </style>
+<script type="text/javascript">
+	var bp_like_terms_like = 'Like';
+	var bp_like_terms_like_message = 'Like this item';
+	var bp_like_terms_unlike_message = 'Unlike this item';
+	var bp_like_terms_view_likes = 'View likes';
+	var bp_like_terms_hide_likes = 'Hide likes';
+	var bp_like_terms_unlike_1 = 'Unlike (1)';
+</script>
 <?php	
 }
-add_action('wp_head', 'bp_like_insert_css');
+add_action('wp_head', 'bp_like_insert_head');
 
 /**
  * bp_like_add_admin_page_menu()

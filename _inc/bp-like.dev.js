@@ -21,26 +21,24 @@ jQuery(document).ready( function() {
 			// Swap from like to unlike
 			if (type == 'like') {
 				var newID = id.replace("like", "unlike");
-				jQuery('#' + id).removeClass('like').addClass('unlike').attr('title', 'Unlike this item').attr('id', newID);
+				jQuery('#' + id).removeClass('like').addClass('unlike').attr('title', bp_like_terms_unlike_message).attr('id', newID);
 			} else {
 				var newID = id.replace("unlike", "like");
-				jQuery('#' + id).removeClass('unlike').addClass('like').attr('title', 'Like this item').attr('id', newID);
+				jQuery('#' + id).removeClass('unlike').addClass('like').attr('title', bp_like_terms_like_message).attr('id', newID);
 			}
 			
 			// Nobody else liked this, so remove the 'View Likes'
-			if (data == 'Like') {
+			if (data == bp_like_terms_like) {
 				var pureID = id.replace("unlike-activity-", "");
 				jQuery('.view-likes#view-likes-'+ pureID).remove();
 				jQuery('.users-who-like#users-who-like-'+ pureID).remove();
 			}
 			
-			// TODO: Show the 'View Likes' if user is first to like
-			/*
-			if ( ) {
+			// Show the 'View Likes' if user is first to like
+			if ( data == bp_like_terms_unlike_1 ) {
 				var pureID = id.replace("like-activity-", "");
 				jQuery('li#activity-'+ pureID + ' .activity-meta').append('<a href="" class="view-likes" id="view-likes-' + pureID + '">View likes</a><p class="users-who-like" id="users-who-like-' + pureID + '"></p>');
 			}
-			*/
 			
 		});
 		
@@ -63,14 +61,14 @@ jQuery(document).ready( function() {
 				'id': id
 			},
 			function(data) {
-				jQuery('#' + id).html('Hide likes').removeClass('loading').addClass('open');
+				jQuery('#' + id).html(bp_like_terms_hide_likes).removeClass('loading').addClass('open');
 				jQuery('#' + parentID).html(data).slideDown('fast');
 			});
 			return false;
 
 		} else {
 
-			jQuery(this).html('View likes').removeClass('loading, open');
+			jQuery(this).html(bp_like_terms_view_likes).removeClass('loading, open');
 			jQuery('#' + parentID).slideUp('fast');
 			return false;
 
