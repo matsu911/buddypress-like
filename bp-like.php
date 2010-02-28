@@ -4,7 +4,7 @@ Plugin Name: BuddyPress Like
 Plugin URI: http://bplike.wordpress.com
 Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 Author: Alex Hempton-Smith
-Version: 0.0.4
+Version: 0.0.5
 Author URI: http://www.alexhemptonsmith.com
 */
 
@@ -21,7 +21,7 @@ if ( !function_exists( 'bp_core_install' ) ) {
 if ( !defined( 'BP_LIKE_SLUG' ) )
 	define ( 'BP_LIKE_SLUG', 'like' );
 
-define ( 'BP_LIKE_VERSION', '0.0.4' );
+define ( 'BP_LIKE_VERSION', '0.0.5' );
 define ( 'BP_LIKE_DB_VERSION', '3' );
 
 /**
@@ -234,7 +234,10 @@ function bp_like_get_activity_likes( $activity_id = false, $user_id = false ) {
 	$users_who_like = array_keys(bp_activity_get_meta( $activity_id, 'liked_count' ));
 	$liked_count = count(bp_activity_get_meta( $activity_id, 'liked_count' ));
 	$users_friends = friends_get_friend_user_ids($user_id);
-	$friends_who_like = array_intersect($users_who_like, $users_friends);
+	
+	if (!empty($users_friends))
+		$friends_who_like = array_intersect($users_who_like, $users_friends);
+	
 	$non_friends_who_like = $liked_count-count($friends_who_like);
 	
 	if (bp_like_get_activity_is_liked($activity_id, $user_id))
