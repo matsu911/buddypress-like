@@ -275,23 +275,17 @@ function bp_like_get_activity_likes( $activity_id = false, $user_id = false ) {
 				$output .= __('You are the only person who likes this so far.', 'bp-like');
 			
 			else :
-			
-				if (bp_like_get_activity_is_liked($activity_id, $user_id)) {
+				
+				if (bp_like_get_activity_is_liked($activity_id, $user_id)) :
+					
 					$liked_count = $liked_count-1;
-					$output .= 'You and ';
-				}
-			
-				$output .= $liked_count;
+					$output .= sprintf(_n('You and %d other person like this', 'You and %d other people like this', $liked_count, 'bp-like'), $liked_count) . ' &middot ';
 
-				if (bp_like_get_activity_is_liked($activity_id, $user_id))
-					$output .= ' other';
+				else :
 
-				if ($liked_count == 1) { 
-					$output .= ' person likes';
-				} else {
-					$output .= ' people like';
-				};
-				$output .= ' this &middot '; 
+					$output .= sprintf(_n('%d person likes this', '%d people like this', $liked_count, 'bp-like'), $liked_count) . ' &middot ';
+
+				endif;
 	
 				foreach($users_who_like as $user):
 						if ($user_id == $user)
@@ -305,74 +299,52 @@ function bp_like_get_activity_likes( $activity_id = false, $user_id = false ) {
 		elseif ( bp_like_get_settings('likers_visibility') == 'friends_names_others_numbers' ) :
 
 			if ( !empty( $friends_who_like ) ) :
-
-				if (bp_like_get_activity_is_liked($activity_id, $user_id))
-					$output .= '<a href="' . bp_core_get_user_domain($user_id) . '" title="' . bp_core_get_user_displayname($user_id) . '">You</a> &middot ';
+				
+				if ( bp_like_get_activity_is_liked( $activity_id, $user_id ) )
+					$output .= '<a href="' . bp_core_get_user_domain($user_id) . '" title="' . bp_core_get_user_displayname($user_id) . '">' . __('You', 'bp-like') . '</a> &middot ';
 
 				foreach($friends_who_like as $friend) :
 					$output .= bp_core_get_userlink($friend) . ' &middot ';
 				endforeach;
-
-				if ($non_friends_who_like) :
-
-					$output .= ' and ' . $non_friends_who_like . ' other';
-
-					if ($non_friends_who_like == 1)
-						$output .= ' person';
-					else
-						$output .= ' people';
+					
+				if ($non_friends_who_like)
+					$output .= sprintf(_n('and %d other person like this.', 'and %d other people like this.', $non_friends_who_like, 'bp-like'), $non_friends_who_like);
 				
-					$output .= ' like this.';
-				
-				else :
-
-					if (count($friends_who_like) == 1 && !bp_like_get_activity_is_liked($activity_id, $user_id))
-						$output .= ' likes this.';
-					elseif (count($friends_who_like) == 1 && bp_like_get_activity_is_liked($activity_id, $user_id))
-						$output .= ' like this.';
-					else
-						$output .= ' like this.';
-
-				endif;
+				else
+					$output .= sprintf(_n('likes this.', 'like this.', $liked_count, 'bp-like'), $liked_count);
 
 			elseif ( !count($friends_who_like) && $liked_count == 1 && bp_like_get_activity_is_liked($activity_id, $user_id)) :
 			
 				$output = 'You are the only person who likes this so far.';
 
-			elseif (empty( $friends_who_like ) && $liked_count > 0) :
+			elseif (empty( $friends_who_like )) :
 				
-				if (bp_like_get_activity_is_liked($activity_id, $user_id))
-					$liked_count = $liked_count-1;
+				if (bp_like_get_activity_is_liked($activity_id, $user_id)) :
 
-				$output = 'None of your friends like this yet, but ';
-				if (bp_like_get_activity_is_liked($activity_id, $user_id))
-					$output .= ' you and ';
-				$output .= $liked_count.' other';
+					$liked_count = $liked_count-1;
+					$output .= sprintf(_n('None of your friends like this yet, but you and %d other person does.', 'None of your friends like this yet, but you and %d other people do.', $liked_count, 'bp-like'), $liked_count);
 				
-				if ( $liked_count == 1 ) :
-					$output .= ' person ';
-					if (bp_like_get_activity_is_liked($activity_id, $user_id))
-						$output .= 'do.';
-					else
-						$output .= 'does.';
 				else :
-					$output .= ' people do.';
+
+					$output .= sprintf(_n('None of your friends like this yet, but %d other person does.', 'None of your friends like this yet, but %d other people do.', $liked_count, 'bp-like'), $liked_count);
+
 				endif;
+
 			endif;
 
 		elseif ( bp_like_get_settings('likers_visibility') == 'just_numbers' ) :
-
-			if ($liked_count == 1 && !bp_like_get_activity_is_liked($activity_id, $user_id)) :
-				$output .= __('1 person likes this.');
-			elseif ($liked_count > 1 && !bp_like_get_activity_is_liked($activity_id, $user_id)) :
-				$output .= printf(__('%d people like this.'), $liked_count);
-			elseif ($liked_count == 1 && bp_like_get_activity_is_liked($activity_id, $user_id)) :
-				$output = 'You are the only person who likes this so far.';
-			elseif ($liked_count == 2 && bp_like_get_activity_is_liked($activity_id, $user_id)) :
-				$output = 'You and 1 other person like this.';
-			elseif ($liked_count > 2 && bp_like_get_activity_is_liked($activity_id, $user_id)) :
-				$liked_count = $liked_count-1;
-				$output = 'You and ' . $liked_count . ' other people like this.';
+		
+			if ( bp_like_get_activity_is_liked($activity_id, $user_id) ) :
+				
+				if ( $liked_count == 1 ) :
+					$output .= __('You are the only person who likes this so far.', 'bp-like');
+				else :
+					$liked_count = $liked_count-1;
+					$output .= sprintf(_n('You and %d other person like this.', 'You and %d other people like this.', $liked_count, 'bp-like'), $liked_count);
+				endif;
+			
+			else :
+				$output .= sprintf(_n('%d person likes this.', '%d people like this.', $liked_count, 'bp-like'), $liked_count);
 			endif;
 
 		endif;
