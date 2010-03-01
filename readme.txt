@@ -11,11 +11,20 @@ Gives users of a BuddyPress site the ability to 'like' activities, and soon othe
 
 <strong>Requires BuddyPress 1.2 or higher.</strong>
 
-Adds a 'Like' button to activities in the stream, which shows how many people have 'liked' the item in brackets, and allows the logged in user to also 'like' it.
+Adds a 'Like' button to activities in the stream, allowing users to 'like' the item and see who else has done the same.
 
-This is an initial release, and using feedback from the community I will be expanding the plugin to allow 'liking' of other social elements of BuddyPress.
+Updates are constantly being made, and feature requests are more than welcomed!
 
 == Installation ==
+
+= Automatic Installation =
+
+1. From inside your WordPress administration panel, visit 'Plugins -> Add New'
+2. Search for `BuddyPress Like` and find this plugin in the results
+3. Click 'Install'
+4. Once installed, activate via the 'Plugins -> Installed' page
+
+= Manual Installation =
 
 1. Upload `buddypress-like` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
