@@ -34,7 +34,7 @@ function bp_like_load_textdomain() {
 	$mofile = WP_PLUGIN_DIR . '/buddypress-like/_lang/buddypress-like-' . get_locale() . '.mo';
 
 	if ( file_exists( $mofile ) )
-		load_textdomain( 'buddypress-like', $mofile );
+		load_plugin_textdomain( 'buddypress-like', $mofile );
 }
 add_action ( 'plugins_loaded', 'bp_like_load_textdomain', 5 );
 
@@ -172,7 +172,7 @@ function bp_like_activity_add_user_like( $activity_id, $user_id = false ) {
 	$liked_count = count($users_who_like);
 	
 	/* Add an update to their activity stream saying they liked this activity */
-	$activity = bp_activity_get_specific( array( 'activity_ids' => $activity_id, 'component' => 'bp-like' ) );
+	$activity = bp_activity_get_specific( array( 'activity_ids' => $activity_id, 'component' => 'buddypress-like' ) );
 	$author_id = $activity['activities'][0]->user_id;
 	
 	if ($user_id == $author_id) :
@@ -230,10 +230,10 @@ function bp_like_activity_remove_user_like( $activity_id, $user_id = false ) {
 	$liked_count = count($users_who_like);
 
 	/* Remove the update on the users profile from when they liked the activity. */
-	$update_id = bp_activity_get_activity_id( array( 'item_id' => $activity_id, 'component' => 'bp-like' ) );
-	bp_activity_delete( array( 'id' => $update_id, 'component' => 'bp-like' ) );
+	$update_id = bp_activity_get_activity_id( array( 'item_id' => $activity_id, 'component' => 'buddypress-like' ) );
+	bp_activity_delete( array( 'id' => $update_id, 'component' => 'buddypress-like' ) );
 	
-	$activity = bp_activity_get_specific( array( 'activity_ids' => $activity_id, 'component' => 'bp-like' ) );
+	$activity = bp_activity_get_specific( array( 'activity_ids' => $activity_id, 'component' => 'buddypress-like' ) );
 	$author_id = $activity['activities'][0]->user_id;
 
 	_e('Like', 'buddypress-like');
@@ -397,9 +397,9 @@ function bp_like_activity_button() {
 		$liked_count = count($users_who_like);
 	}
 		if ( !bp_like_get_activity_is_liked() ) : ?>
-		<a href="" class="like" id="like-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Like this item', 'bp-like' ) ?>"><?php _e( 'Like', 'bp-like' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
+		<a href="" class="like" id="like-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Like this item', 'buddypress-like' ) ?>"><?php _e( 'Like', 'buddypress-like' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
 				<?php else : ?>
-		<a href="" class="unlike" id="unlike-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Unlike this item', 'bp-like' ) ?>"><?php _e( 'Unlike', 'bp-like' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
+		<a href="" class="unlike" id="unlike-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Unlike this item', 'buddypress-like' ) ?>"><?php _e( 'Unlike', 'buddypress-like' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
 		<?php endif;
 		if ($users_who_like): ?>
 		<a href="" class="view-likes" id="view-likes-<?php bp_activity_id(); ?>"><?php _e('View likes', 'buddypress-like') ?></a>
@@ -535,8 +535,8 @@ function bp_like_admin_page() {
   <h2><?php _e('BuddyPress Like Settings', 'buddypress-like'); ?></h2>
   <form action="" method="post" id="bp-like-admin-form">
     <input type="hidden" name="bp_like_settings_updated" value="updated" />
-    <h3><?php _e("'View Likes' Visibility", "bp-like"); ?></h3>
-    <p><?php _e("You can choose how much information about the 'likers' of a particular item is shown;", "bp-like"); ?></p>
+    <h3><?php _e("'View Likes' Visibility", "buddypress-like"); ?></h3>
+    <p><?php _e("You can choose how much information about the 'likers' of a particular item is shown;", "buddypress-like"); ?></p>
     <p>
       <input type="radio" name="bp_like_admin_likers_visibility" value="show_all" <?php if ( bp_like_get_settings('likers_visibility') == 'show_all' ) { echo 'checked="checked""'; }; ?> /> <?php _e('Show the name and profile link of all likers', 'buddypress-like'); ?><br />
       <input type="radio" name="bp_like_admin_likers_visibility" value="friends_names_others_numbers" <?php if ( bp_like_get_settings('likers_visibility') == 'friends_names_others_numbers' ) { echo 'checked="checked""'; }; ?> /> <?php _e('Show the names of friends, and the number of non-friends', 'buddypress-like'); ?><br />
