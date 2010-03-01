@@ -9,11 +9,11 @@ Gives users of a BuddyPress site the ability to 'like' activities, and soon othe
 
 == Description ==
 
-<strong>Requires BuddyPress 1.2 or higher.</strong>
+<strong>Requires <a href="http://wordpress.org/extend/plugins/buddypress/">BuddyPress 1.2</a> or higher.</strong>
 
 Adds a 'Like' button to activities in the stream, allowing users to 'like' the item and see who else has done the same.
 
-Updates are constantly being made, and feature requests are more than welcomed!
+Updates are constantly being made, and feature requests are more than welcome!
 
 == Installation ==
 
