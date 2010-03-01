@@ -52,7 +52,7 @@ jQuery(document).ready( function() {
 		var parentID = id.replace("view-likes", "users-who-like");
 	
 		if ( !jQuery(this).hasClass('open') ) {
-
+			
 			jQuery(this).addClass('loading');
 			jQuery.post( ajaxurl, {
 				action: 'activity_like',
