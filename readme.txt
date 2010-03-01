@@ -1,13 +1,15 @@
 === Plugin Name ===
 Contributors: hempsworth
 Tags: buddypress, like, rate, thumbs
-Requires at least: 2.9.1 and BuddyPress 1.2
-Tested up to: 2.9.1 and BuddyPress 1.2.1
+Requires at least: 2.9
+Tested up to: 2.9.1
 Stable tag: 0.0.5
 
 Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 
 == Description ==
+
+<strong>Requires BuddyPress 1.2 or higher.</strong>
 
 Adds a 'Like' button to activities in the stream, which shows how many people have 'liked' the item in brackets, and allows the logged in user to also 'like' it.
 

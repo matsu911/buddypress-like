@@ -68,10 +68,10 @@ function bp_like_install_buddypress_notice() {
 function bp_like_upgrade_notice() {
 	if ( !is_site_admin() )
 		return false;
-
-	echo '<div id="message" class="updated fade bp-like-upgraded"><p style="line-height: 150%"><strong>BuddyPress Like</strong> ';
-	_e('has been successfully upgraded to version', 'bp-like');
-	echo ' ' . BP_LIKE_VERSION . '.</p></div>';
+	
+	echo '<div id="message" class="updated fade bp-like-upgraded"><p style="line-height: 150%">';
+	printf(__('<strong>BuddyPress Like</strong> has been successfully upgraded to version %s.', 'bp-like'), BP_LIKE_VERSION);
+	echo '</p></div>';
 }
 
 /**
@@ -544,7 +544,7 @@ function bp_like_admin_page() {
 		$likers_visibility = $_POST['bp_like_admin_likers_visibility'];
 		update_site_option( 'bp_like_settings', array('likers_visibility' => $likers_visibility) );
 		echo '<div class="updated"><p><strong>';
-		_e('Settings saved.');
+		_e('Settings saved.', 'wordpress');
 		echo '</strong></p></div>';
 	}
 
@@ -568,7 +568,7 @@ function bp_like_admin_page() {
       <input type="radio" name="bp_like_admin_likers_visibility" value="just_numbers" <?php if ( bp_like_get_settings('likers_visibility') == 'just_numbers' ) { echo 'checked="checked""'; }; ?> /> <?php _e('Show only the number of likers', 'bp-like'); ?>
     </p>
     <p class="submit">
-      <input class="button-primary" type="submit" name="bp-like-admin-submit" id="bp-like-admin-submit" value="<?php _e('Save Changes'); ?>"/>
+      <input class="button-primary" type="submit" name="bp-like-admin-submit" id="bp-like-admin-submit" value="<?php _e('Save Changes', 'wordpress'); ?>"/>
     </p>
     <?php wp_nonce_field( 'bp-like-admin' ) ?>
   </form>
