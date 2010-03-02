@@ -155,13 +155,8 @@ function bp_like_install() {
 
 	if ( !get_site_option('bp_like_db_version') || get_site_option('bp_like_db_version') < BP_LIKE_DB_VERSION )
 		update_site_option('bp_like_db_version', BP_LIKE_DB_VERSION );
-
-	if ( !get_site_option('bp_like_settings') )
-		update_site_option('bp_like_settings', $default_settings );
 		
-	if ( get_site_option('bp_like_settings') == 3 )
-		update_site_option('bp_like_settings', $default_settings );
-	
+	update_site_option('bp_like_settings', $default_settings );
 	add_action( 'admin_notices', 'bp_like_upgrade_notice' );
 }
 
