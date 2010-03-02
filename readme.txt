@@ -2,8 +2,8 @@
 Contributors: hempsworth
 Tags: buddypress, like, rate, thumbs
 Requires at least: 2.9
-Tested up to: 2.9.2
-Stable tag: 0.0.6
+Tested up to: 2.9.1
+Stable tag: 0.0.7
 
 Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 
@@ -31,6 +31,11 @@ Updates are constantly being made, and feature requests are more than welcome!
 
 == Changelog ==
 
+= 0.0.7 =
+* Fixes a couple of major bugs
+* Bug fixed: Posts, drafts etc would not be saved, giving error "You do not have permission to do that."
+* Bug fixed: Could not save 'Likers Visibility' options from the BuddyPress Like settings screen
+
 = 0.0.6 =
 * Fully localised.
 * Adds options to customise the messages displayed to users.
@@ -49,6 +54,9 @@ Updates are constantly being made, and feature requests are more than welcome!
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.0.7 =
+Important upgrade! Fixes a couple of major bugs affecting saving posts, drafts etc (giving error "You do not have permission to do that.") and the saving of 'Likers Visibility' options
 
 = 0.0.6 =
 Now with translation support, as well as options to customise the messages displayed to users.

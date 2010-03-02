@@ -4,7 +4,7 @@ Plugin Name: BuddyPress Like
 Plugin URI: http://bplike.wordpress.com
 Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 Author: Alex Hempton-Smith
-Version: 0.0.6
+Version: 0.0.7
 Author URI: http://www.alexhemptonsmith.com
 */
 
@@ -21,8 +21,8 @@ if ( !function_exists( 'bp_core_install' ) ) {
 	}
 }
 
-define ( 'BP_LIKE_VERSION', '0.0.6' );
-define ( 'BP_LIKE_DB_VERSION', '4' );
+define ( 'BP_LIKE_VERSION', '0.0.7' );
+define ( 'BP_LIKE_DB_VERSION', '5' );
 
 /**
  * bp_like_load_textdomain()
@@ -146,16 +146,15 @@ function bp_like_install() {
 
 	$default_settings = array(
 		'likers_visibility' => 	'friends_names_others_numbers',
-		'text_strings'		=>	$default_text_strings,
-		'default_strings'   =>  $default_text_strings
+		'text_strings'		=>	$default_text_strings
 	);
 
 	if ( get_site_option('bp-like-db-version') )
-		delete_site_option('bp-like-db-version', BP_LIKE_DB_VERSION );
+		delete_site_option('bp-like-db-version');
 
 	if ( !get_site_option('bp_like_db_version') || get_site_option('bp_like_db_version') < BP_LIKE_DB_VERSION )
 		update_site_option('bp_like_db_version', BP_LIKE_DB_VERSION );
-		
+
 	update_site_option('bp_like_settings', $default_settings );
 	add_action( 'admin_notices', 'bp_like_upgrade_notice' );
 }
@@ -651,7 +650,7 @@ add_action('admin_menu', 'bp_like_add_admin_page_menu');
  *
  */
 function bp_like_admin_page_verify_nonce() {
-	if( $_POST['_wpnonce'] ) {
+	if( isset($_POST['_wpnonce']) && isset($_POST['bp_like_updated']) ) {
 		$nonce = $_REQUEST['_wpnonce'];
 		if ( !wp_verify_nonce($nonce, 'bp-like-admin') )
 			wp_die( __('You do not have permission to do that.') );
@@ -667,20 +666,21 @@ add_action('init', 'bp_like_admin_page_verify_nonce');
  */
 function bp_like_admin_page() {
 
-    if( $_POST['_wpnonce'] ) {
+	/* Update our options if the form has been submitted */
+    if( isset($_POST['_wpnonce']) && isset($_POST['bp_like_updated']) ) {
 		
+		/* Add each text string to the $strings_to_save array */
 		foreach ($_POST as $key => $value) {
 			if (preg_match("/text_string_/i", $key)) {
 				$default = bp_like_get_text(str_replace('bp_like_admin_text_string_', '', $key), 'default');
 				$strings_to_save[str_replace('bp_like_admin_text_string_', '', $key)] = array('default' => $default, 'custom' => stripslashes($value));
-			} elseif (preg_match('/bp_like_/i', $key)) {
-				$settings_to_save[str_replace('bp_like_admin_', '', $key)] = $value;
 			}
 		}
 		
-		$settings_to_save['text_strings'] = $strings_to_save;
+		/* Now actually save the data to the options table */
+		update_site_option( 'bp_like_settings', array('likers_visibility' => $_POST['bp_like_admin_likers_visibility'], 'text_strings' => $strings_to_save ) );
 		
-		update_site_option( 'bp_like_settings', $settings_to_save );
+		/* Let the user know everything's cool */
 		echo '<div class="updated"><p><strong>';
 		_e('Settings saved.', 'wordpress');
 		echo '</strong></p></div>';
@@ -705,6 +705,7 @@ table label {
   <div id="icon-bp-like-settings" class="icon32"><br /></div>
   <h2><?php _e('BuddyPress Like Settings', 'buddypress-like'); ?></h2>
   <form action="" method="post" id="bp-like-admin-form">
+    <input type="hidden" name="bp_like_updated" value="updated">
     <h3><?php _e("'View Likes' Visibility", "buddypress-like"); ?></h3>
     <p><?php _e("You can choose how much information about the 'likers' of a particular item is shown;", "buddypress-like"); ?></p>
     <p>
