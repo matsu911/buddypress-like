@@ -3,7 +3,7 @@ Contributors: hempsworth
 Tags: buddypress, like, rate, thumbs
 Requires at least: 2.9
 Tested up to: 2.9.1
-Stable tag: 0.0.5
+Stable tag: 0.0.6
 
 Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 
@@ -31,6 +31,10 @@ Updates are constantly being made, and feature requests are more than welcome!
 
 == Changelog ==
 
+= 0.0.6 =
+* Fully localised.
+* Adds options to customise the messages displayed to users.
+
 = 0.0.5 =
 * Fixes a bug when a user tries to view likes when they have no friends.
 * Inserts the 'View likes' button if the user is the first to like an item.
@@ -45,6 +49,9 @@ Updates are constantly being made, and feature requests are more than welcome!
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.0.6 =
+Now with translation support, as well as options to customise the messages displayed to users.
 
 = 0.0.5 =
 Important upgrade for 0.0.4 users! Fixes a bug when a user tries to view likes when they have no friends.

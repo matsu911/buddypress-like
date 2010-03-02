@@ -4,7 +4,7 @@ Plugin Name: BuddyPress Like
 Plugin URI: http://bplike.wordpress.com
 Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
 Author: Alex Hempton-Smith
-Version: 0.0.6-dev
+Version: 0.0.6
 Author URI: http://www.alexhemptonsmith.com
 */
 
@@ -21,8 +21,8 @@ if ( !function_exists( 'bp_core_install' ) ) {
 	}
 }
 
-define ( 'BP_LIKE_VERSION', '0.0.6-dev' );
-define ( 'BP_LIKE_DB_VERSION', '3' );
+define ( 'BP_LIKE_VERSION', '0.0.6' );
+define ( 'BP_LIKE_DB_VERSION', '4' );
 
 /**
  * bp_like_load_textdomain()
@@ -45,9 +45,109 @@ add_action ( 'plugins_loaded', 'bp_like_load_textdomain', 5 );
  *
  */
 function bp_like_install() {
+	
+	$default_text_strings = array(
+		'like' => array(
+			'default'	=> __('Like', 'buddypress-like'), 
+			'custom'	=> __('Like', 'buddypress-like')
+		),
+		'unlike' => array(
+			'default'	=> __('Unlike', 'buddypress-like'),
+			'custom'	=> __('Unlike', 'buddypress-like')
+		),
+		'like_this_item' => array(
+			'default'	=> __('Like this item', 'buddypress-like'),
+			'custom'	=> __('Like this item', 'buddypress-like')
+		),
+		'unlike_this_item' => array(
+			'default'	=> __('Unlike this item', 'buddypress-like'),
+			'custom'	=> __('Unlike this item', 'buddypress-like')
+		),
+		'view_likes' => array(
+			'default'	=> __('View likes', 'buddypress-like'),
+			'custom'	=> __('View likes', 'buddypress-like')
+		),
+		'hide_likes' => array(
+			'default'	=> __('Hide likes', 'buddypress-like'),
+			'custom'	=> __('Hide likes', 'buddypress-like')
+		),
+		'show_activity_likes' => array(
+			'default'	=> __('Show Activity Likes', 'buddypress-like'),
+			'custom'	=> __('Show Activity Likes', 'buddypress-like')
+		),
+		'must_be_logged_in' => array(
+			'default'	=> __('Sorry, you must be logged in to like that.', 'buddypress-like'),
+			'custom'	=> __('Sorry, you must be logged in to like that.', 'buddypress-like')),
+		'record_activity_likes_own' => array(
+			'default'	=> __('%user% likes their own <a href="%permalink%">activity</a>', 'buddypress-like'),
+			'custom'	=> __('%user% likes their own <a href="%permalink%">activity</a>', 'buddypress-like')
+		),
+		'record_activity_likes_an' => array(
+			'default'	=> __('%user% likes an <a href="%permalink%">activity</a>', 'buddypress-like'),
+			'custom'	=> __('%user% likes an <a href="%permalink%">activity</a>', 'buddypress-like')
+		),
+		'record_activity_likes_users' => array(
+			'default'	=> __('%user% likes %author%\'s <a href="%permalink%">activity</a>', 'buddypress-like'),
+			'custom'	=> __('%user% likes %author%\'s <a href="%permalink%">activity</a>', 'buddypress-like')
+		),
+		'get_likes_only_liker' => array(
+			'default'	=> __('You are the only person who likes this so far.', 'buddypress-like'),
+			'custom'	=> __('You are the only person who likes this so far.', 'buddypress-like')
+		),
+		'get_likes_you_and_singular' => array(
+			'default'	=> __('You and %count% other person like this', 'buddypress-like'),
+			'custom'	=> __('You and %count% other person like this', 'buddypress-like')
+		),
+		'get_likes_you_and_plural' => array(
+			'default'	=> __('You and %count% other people like this', 'buddypress-like'),
+			'custom'	=> __('You and %count% other people like this', 'buddypress-like')
+		),
+		'get_likes_count_people_singular' => array(
+			'default'	=> __('%count% person likes this', 'buddypress-like'),
+			'custom'	=> __('%count% person likes this', 'buddypress-like')
+		),
+		'get_likes_count_people_plural' => array(
+			'default'	=> __('%count people like this', 'buddypress-like'),
+			'custom'	=> __('%count people like this', 'buddypress-like')
+		),
+		'get_likes_and_people_singular' => array(
+			'default'	=> __('and %count% other person like this.', 'buddypress-like'),
+			'custom'	=> __('and %count% other person like this.', 'buddypress-like')
+		),
+		'get_likes_and_people_plural' => array(
+			'default'	=> __('and %count% other people like this.', 'buddypress-like'),
+			'custom'	=> __('and %count% other people like this.', 'buddypress-like')
+		),
+		'get_likes_likes_this' => array(
+			'default'	=> __('likes this.', 'buddypress-like'),
+			'custom'	=> __('likes this.', 'buddypress-like')
+		),
+		'get_likes_like_this' => array(
+			'default'	=> __('like this.', 'buddypress-like'),
+			'custom'	=> __('like this.', 'buddypress-like')
+		),
+		'get_likes_no_friends_you_and_singular' => array(
+			'default'	=> __('None of your friends like this yet, but you and %count% other person does.', 'buddypress-like'),
+			'custom'	=> __('None of your friends like this yet, but you and %count% other person does.', 'buddypress-like')
+		),
+		'get_likes_no_friends_you_and_plural' => array(
+			'default'	=> __('None of your friends like this yet, but you and %count% other people do.', 'buddypress-like'),
+			'custom'	=> __('None of your friends like this yet, but you and %count% other people do.', 'buddypress-like')
+		),
+		'get_likes_no_friends_singular' => array(
+			'default'	=> __('None of your friends like this yet, but %count% other person does.', 'buddypress-like'),
+			'custom'	=> __('None of your friends like this yet, but %count% other person does.', 'buddypress-like')
+		),
+		'get_likes_no_friends_plural' => array(
+			'default'	=> __('None of your friends like this yet, but %count% other people do.', 'buddypress-like'),
+			'custom'	=> __('None of your friends like this yet, but %count% other people do.', 'buddypress-like')
+		)
+	);
 
 	$default_settings = array(
-		'likers_visibility' => 'friends_names_others_numbers'
+		'likers_visibility' => 	'friends_names_others_numbers',
+		'text_strings'		=>	$default_text_strings,
+		'default_strings'   =>  $default_text_strings
 	);
 
 	if ( get_site_option('bp-like-db-version') )
@@ -57,6 +157,9 @@ function bp_like_install() {
 		update_site_option('bp_like_db_version', BP_LIKE_DB_VERSION );
 
 	if ( !get_site_option('bp_like_settings') )
+		update_site_option('bp_like_settings', $default_settings );
+		
+	if ( get_site_option('bp_like_settings') == 3 )
 		update_site_option('bp_like_settings', $default_settings );
 	
 	add_action( 'admin_notices', 'bp_like_upgrade_notice' );
@@ -116,6 +219,21 @@ function bp_like_get_settings( $option = false ) {
 }
 
 /**
+ * bp_like_get_text()
+ *
+ * Returns a custom text string from the database
+ *
+ */
+function bp_like_get_text( $text = false, $type = 'custom' ) {
+	
+	$settings = get_site_option('bp_like_settings');
+	$text_strings = $settings['text_strings'];
+	$string = $text_strings[$text];
+		
+	return $string[$type];
+}
+
+/**
  * bp_like_process_ajax()
  *
  * Runs the relevant function depending on what Ajax call has been made.
@@ -155,7 +273,7 @@ function bp_like_activity_add_user_like( $activity_id, $user_id = false ) {
 		$user_id = $bp->loggedin_user->id;
 	
 	if ( $user_id == 0 ) {
-		_e('Sorry, you must be logged in to like that.', 'buddypress-like');
+		echo bp_like_get_text('must_be_logged_in');
 		return false;
 	}
 	
@@ -178,21 +296,26 @@ function bp_like_activity_add_user_like( $activity_id, $user_id = false ) {
 	if ($user_id == $author_id) :
 		$liker = bp_core_get_userlink( $user_id );
 		$activity_url = bp_activity_get_permalink($activity_id);
-		$action = sprintf(__('%s likes their own <a href="%s">activity</a>', 'buddypress-like'), $liker, $activity_url);
+		$action = bp_like_get_text('record_activity_likes_own');
 	elseif ($user_id == 0) :
 		$liker = bp_core_get_userlink( $user_id );
 		$activity_url = bp_activity_get_permalink($activity_id);
-		$action = sprintf(__('%s likes an <a href="%s">activity</a>', 'buddypress-like'), $liker, $activity_url);
+		$action = bp_like_get_text('record_activity_likes_an');
 	else :
 		$liker = bp_core_get_userlink( $user_id );
 		$author = bp_core_get_userlink( $author_id );
 		$activity_url = bp_activity_get_permalink($activity_id);
-		$action = sprintf(__('%s likes %s\'s <a href="%s">activity</a>', 'buddypress-like'), $liker, $author, $activity_url);
+		$action = bp_like_get_text('record_activity_likes_users');
 	endif;
 	
+	/* Filter out the placeholders */
+	$action = str_replace('%user%', $liker, $action);
+	$action = str_replace('%permalink%', $activity_url, $action);
+	$action = str_replace('%author%', $author, $action);
+
 	bp_activity_add( array( 'action' => $action, 'component' => 'bp-like', 'type' => 'activity_liked', 'user_id' => $user_id, 'item_id' => $activity_id ) );
 
-	_e('Unlike', 'buddypress-like');
+	echo bp_like_get_text('unlike');
 	if ($liked_count)
 		echo ' (' . $liked_count . ')';
 }
@@ -213,7 +336,7 @@ function bp_like_activity_remove_user_like( $activity_id, $user_id = false ) {
 		$user_id = $bp->loggedin_user->id;
 	
 	if ( $user_id == 0 ) {
-		_e('Sorry, you must be logged in to like that.', 'buddypress-like');
+		echo bp_like_get_text('must_be_logged_in');
 		return false;
 	}
 
@@ -236,7 +359,7 @@ function bp_like_activity_remove_user_like( $activity_id, $user_id = false ) {
 	$activity = bp_activity_get_specific( array( 'activity_ids' => $activity_id, 'component' => 'buddypress-like' ) );
 	$author_id = $activity['activities'][0]->user_id;
 
-	_e('Like', 'buddypress-like');
+	echo bp_like_get_text('like');
 	if ($liked_count)
 		echo ' (' . $liked_count . ')';
 }
@@ -275,18 +398,27 @@ function bp_like_get_activity_likes( $activity_id = false, $user_id = false ) {
 			
 			if ( $liked_count == 1 && bp_like_get_activity_is_liked($activity_id, $user_id)) :
 			
-				$output .= __('You are the only person who likes this so far.', 'buddypress-like');
+				$output .= bp_like_get_text('get_likes_only_liker');
 			
 			else :
 				
 				if (bp_like_get_activity_is_liked($activity_id, $user_id)) :
 					
 					$liked_count = $liked_count-1;
-					$output .= sprintf(_n('You and %d other person like this', 'You and %d other people like this', $liked_count, 'buddypress-like'), $liked_count) . ' &middot ';
+					
+					if ( $liked_count == 1 )
+						$output .= bp_like_get_text('get_likes_you_and_singular').' &middot ';
+					
+					else
+						$output .= bp_like_get_text('get_likes_you_and_plural').' &middot ';
 
 				else :
 
-					$output .= sprintf(_n('%d person likes this', '%d people like this', $liked_count, 'buddypress-like'), $liked_count) . ' &middot ';
+					if ( $liked_count == 1 )
+						$output .= bp_like_get_text('get_likes_count_people_singular').' &middot ';
+					
+					else
+						$output .= bp_like_get_text('get_likes_count_people_plural').' &middot ';
 
 				endif;
 	
@@ -310,26 +442,45 @@ function bp_like_get_activity_likes( $activity_id = false, $user_id = false ) {
 					$output .= bp_core_get_userlink($friend) . ' &middot ';
 				endforeach;
 					
-				if ($non_friends_who_like)
-					$output .= sprintf(_n('and %d other person like this.', 'and %d other people like this.', $non_friends_who_like, 'buddypress-like'), $non_friends_who_like);
-				
-				else
-					$output .= sprintf(_n('likes this.', 'like this.', $liked_count, 'buddypress-like'), $liked_count);
+				if ($non_friends_who_like) {
+					
+					if ( $non_friends_who_like == 1 )
+						$output .= bp_like_get_text('get_likes_and_people_singular').' &middot ';
+					
+					else
+						$output .= bp_like_get_text('get_likes_and_people_plural').' &middot ';
+									
+				} else {
+					
+					if ( $liked_count ==1 )
+						$output .= bp_like_get_text('get_likes_likes_this');
+					
+					else
+						$output .= bp_like_get_text('get_likes_like_this');
+
+				}
 
 			elseif ( !count($friends_who_like) && $liked_count == 1 && bp_like_get_activity_is_liked($activity_id, $user_id)) :
 			
-				$output = 'You are the only person who likes this so far.';
+				$output .= bp_like_get_text('get_likes_only_liker');
 
 			elseif (empty( $friends_who_like )) :
 				
 				if (bp_like_get_activity_is_liked($activity_id, $user_id)) :
 
 					$liked_count = $liked_count-1;
-					$output .= sprintf(_n('None of your friends like this yet, but you and %d other person does.', 'None of your friends like this yet, but you and %d other people do.', $liked_count, 'buddypress-like'), $liked_count);
+					
+					if ( $liked_count == 1 )
+						$output .= bp_like_get_text('get_likes_no_friends_you_and_singular');
+					else
+						$output .= bp_like_get_text('get_likes_no_friends_you_and_plural');
 				
 				else :
-
-					$output .= sprintf(_n('None of your friends like this yet, but %d other person does.', 'None of your friends like this yet, but %d other people do.', $liked_count, 'buddypress-like'), $liked_count);
+					
+					if ( $liked_count == 1 )
+						$output .= bp_like_get_text('get_likes_no_friends_singular');
+					else
+						$output .= bp_like_get_text('get_likes_no_friends_plural');
 
 				endif;
 
@@ -340,17 +491,25 @@ function bp_like_get_activity_likes( $activity_id = false, $user_id = false ) {
 			if ( bp_like_get_activity_is_liked($activity_id, $user_id) ) :
 				
 				if ( $liked_count == 1 ) :
-					$output .= __('You are the only person who likes this so far.', 'buddypress-like');
+					$output .= bp_like_get_text('get_likes_only_liker');
 				else :
 					$liked_count = $liked_count-1;
-					$output .= sprintf(_n('You and %d other person like this.', 'You and %d other people like this.', $liked_count, 'buddypress-like'), $liked_count);
+					if ( $liked_count == 1 )
+						$output .= bp_like_get_text('get_likes_you_and_singular');
+					else
+						$output .= bp_like_get_text('get_likes_you_and_plural');
 				endif;
 			
 			else :
-				$output .= sprintf(_n('%d person likes this.', '%d people like this.', $liked_count, 'buddypress-like'), $liked_count);
+				if ( $liked_count == 1 )
+					$output .= bp_like_get_text('get_likes_count_people_singular');
+				else
+					$output .= bp_like_get_text('get_likes_count_people_plural');
 			endif;
 
 		endif;
+
+	$output = str_replace('%count%', $liked_count, $output);
 
 	return $output;
 }
@@ -397,12 +556,12 @@ function bp_like_activity_button() {
 		$liked_count = count($users_who_like);
 	}
 		if ( !bp_like_get_activity_is_liked() ) : ?>
-		<a href="" class="like" id="like-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Like this item', 'buddypress-like' ) ?>"><?php _e( 'Like', 'buddypress-like' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
+		<a href="" class="like" id="like-activity-<?php bp_activity_id(); ?>" title="<?php echo bp_like_get_text('like_this_item'); ?>"><?php echo bp_like_get_text('like'); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
 				<?php else : ?>
-		<a href="" class="unlike" id="unlike-activity-<?php bp_activity_id(); ?>" title="<?php _e( 'Unlike this item', 'buddypress-like' ) ?>"><?php _e( 'Unlike', 'buddypress-like' ); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
+		<a href="" class="unlike" id="unlike-activity-<?php bp_activity_id(); ?>" title="<?php echo bp_like_get_text('unlike_this_item'); ?>"><?php echo bp_like_get_text('unlike'); if ($liked_count) echo ' (' . $liked_count . ')'; ?></a>
 		<?php endif;
 		if ($users_who_like): ?>
-		<a href="" class="view-likes" id="view-likes-<?php bp_activity_id(); ?>"><?php _e('View likes', 'buddypress-like') ?></a>
+		<a href="" class="view-likes" id="view-likes-<?php bp_activity_id(); ?>"><?php echo bp_like_get_text('view_likes'); ?></a>
 		<p class="users-who-like" id="users-who-like-<?php bp_activity_id(); ?>"></p>
 		<?php
 		endif;
@@ -417,9 +576,7 @@ add_filter('bp_activity_entry_meta', 'bp_like_activity_button');
  *
  */
 function bp_like_activity_filter() {
-	echo '<option value="activity_liked">';
-	_e('Show Activity Likes', 'buddypress-like');
-	echo '</option>';
+	echo '<option value="activity_liked">' . bp_like_get_text('show_activity_likes') . '</option>';
 }
 add_action('bp_activity_filter_options', 'bp_like_activity_filter');
 add_action('bp_member_activity_filter_options', 'bp_like_activity_filter');
@@ -470,12 +627,12 @@ function bp_like_insert_head() {
 	
 </style>
 <script type="text/javascript">
-	var bp_like_terms_like = '<?php _e('Like', 'buddypress-like'); ?>';
-	var bp_like_terms_like_message = '<?php _e('Like this item', 'buddypress-like'); ?>';
-	var bp_like_terms_unlike_message = '<?php _e('Unlike this item', 'buddypress-like'); ?>';
-	var bp_like_terms_view_likes = '<?php _e('View likes', 'buddypress-like'); ?>';
-	var bp_like_terms_hide_likes = '<?php _e('Hide likes', 'buddypress-like'); ?>';
-	var bp_like_terms_unlike_1 = '<?php _e('Unlike', 'buddypress-like'); ?> (1)';
+	var bp_like_terms_like = '<?php echo bp_like_get_text('like'); ?>';
+	var bp_like_terms_like_message = '<?php echo bp_like_get_text('like_this_item'); ?>';
+	var bp_like_terms_unlike_message = '<?php echo bp_like_get_text('unlike_this_item'); ?>';
+	var bp_like_terms_view_likes = '<?php echo bp_like_get_text('view_likes'); ?>';
+	var bp_like_terms_hide_likes = '<?php echo bp_like_get_text('hide_likes'); ?>';
+	var bp_like_terms_unlike_1 = '<?php echo bp_like_get_text('unlike'); ?> (1)';
 </script>
 <?php	
 }
@@ -516,17 +673,36 @@ add_action('init', 'bp_like_admin_page_verify_nonce');
 function bp_like_admin_page() {
 
     if( $_POST['_wpnonce'] ) {
-		$likers_visibility = $_POST['bp_like_admin_likers_visibility'];
-		update_site_option( 'bp_like_settings', array('likers_visibility' => $likers_visibility) );
+		
+		foreach ($_POST as $key => $value) {
+			if (preg_match("/text_string_/i", $key)) {
+				$default = bp_like_get_text(str_replace('bp_like_admin_text_string_', '', $key), 'default');
+				$strings_to_save[str_replace('bp_like_admin_text_string_', '', $key)] = array('default' => $default, 'custom' => stripslashes($value));
+			} elseif (preg_match('/bp_like_/i', $key)) {
+				$settings_to_save[str_replace('bp_like_admin_', '', $key)] = $value;
+			}
+		}
+		
+		$settings_to_save['text_strings'] = $strings_to_save;
+		
+		update_site_option( 'bp_like_settings', $settings_to_save );
 		echo '<div class="updated"><p><strong>';
 		_e('Settings saved.', 'wordpress');
 		echo '</strong></p></div>';
 	}
+	
+	$text_strings = bp_like_get_settings('text_strings');
 
 ?>
 <style type="text/css">
 #icon-bp-like-settings {
 	background: url('<?php echo plugins_url('/_inc/bp-like-icon32.png', __FILE__); ?>') no-repeat top left;
+}
+table input {
+	width: 100%;
+}
+table label {
+	display: block;
 }
 </style>
 
@@ -534,7 +710,6 @@ function bp_like_admin_page() {
   <div id="icon-bp-like-settings" class="icon32"><br /></div>
   <h2><?php _e('BuddyPress Like Settings', 'buddypress-like'); ?></h2>
   <form action="" method="post" id="bp-like-admin-form">
-    <input type="hidden" name="bp_like_settings_updated" value="updated" />
     <h3><?php _e("'View Likes' Visibility", "buddypress-like"); ?></h3>
     <p><?php _e("You can choose how much information about the 'likers' of a particular item is shown;", "buddypress-like"); ?></p>
     <p>
@@ -542,6 +717,31 @@ function bp_like_admin_page() {
       <input type="radio" name="bp_like_admin_likers_visibility" value="friends_names_others_numbers" <?php if ( bp_like_get_settings('likers_visibility') == 'friends_names_others_numbers' ) { echo 'checked="checked""'; }; ?> /> <?php _e('Show the names of friends, and the number of non-friends', 'buddypress-like'); ?><br />
       <input type="radio" name="bp_like_admin_likers_visibility" value="just_numbers" <?php if ( bp_like_get_settings('likers_visibility') == 'just_numbers' ) { echo 'checked="checked""'; }; ?> /> <?php _e('Show only the number of likers', 'buddypress-like'); ?>
     </p>
+    <h3><?php _e('Custom Messages', 'buddypress-like'); ?></h3>
+    <p><?php _e("Change what messages are shown to users. For example, they can 'love' or 'dig' items instead of liking them.", "buddypress-like"); ?><br /><br /></p>
+    
+    <table class="widefat fixed" cellspacing="0">
+	  <thead>
+	    <tr>
+	      <th scope="col" id="default" class="column-name" style="width: 43%;"><?php _e('Default', 'buddypress-like'); ?></th>
+	      <th scope="col" id="custom" class="column-name" style=""><?php _e('Custom', 'buddypress-like'); ?></th>
+	    </tr>
+	  </thead>
+	  <tfoot>
+	    <tr>
+	      <th colspan="2" id="default" class="column-name"></th>
+	    </tr>
+	  </tfoot>
+
+      <?php foreach ( $text_strings as $key => $string ) : ?>
+      <tr valign="top">
+          <th scope="row" style="width:400px;"><label for="bp_like_admin_text_string_<?php echo $key; ?>"><?php echo htmlspecialchars($string['default']); ?></label></th>
+          <td><input name="bp_like_admin_text_string_<?php echo $key; ?>" id="bp_like_admin_text_string_<?php echo $key; ?>" value="<?php echo htmlspecialchars($string['custom']); ?>" class="regular-text" type="text"></td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
+
     <p class="submit">
       <input class="button-primary" type="submit" name="bp-like-admin-submit" id="bp-like-admin-submit" value="<?php _e('Save Changes', 'wordpress'); ?>"/>
     </p>
