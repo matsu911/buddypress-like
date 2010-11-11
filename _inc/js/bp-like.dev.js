@@ -1,5 +1,5 @@
 jQuery(document).ready( function() {
-	jQuery('.like, .unlike').live('click', function() {
+	jQuery('.like, .unlike, .like_blogpost, .unlike_blogpost').live('click', function() {
 		
 		var type = jQuery(this).attr('class');
 		var id = jQuery(this).attr('id');
@@ -22,6 +22,12 @@ jQuery(document).ready( function() {
 			if (type == 'like') {
 				var newID = id.replace("like", "unlike");
 				jQuery('#' + id).removeClass('like').addClass('unlike').attr('title', bp_like_terms_unlike_message).attr('id', newID);
+			} else if (type == 'like_blogpost') {
+				var newID = id.replace("like", "unlike");
+				jQuery('#' + id).removeClass('like_blogpost').addClass('unlike_blogpost').attr('title', bp_like_terms_unlike_message).attr('id', newID);
+			} else if (type == 'unlike_blogpost') {
+				var newID = id.replace("unlike", "like");
+				jQuery('#' + id).removeClass('unlike_blogpost').addClass('like_blogpost').attr('title', bp_like_terms_unlike_message).attr('id', newID);
 			} else {
 				var newID = id.replace("unlike", "like");
 				jQuery('#' + id).removeClass('unlike').addClass('like').attr('title', bp_like_terms_like_message).attr('id', newID);
