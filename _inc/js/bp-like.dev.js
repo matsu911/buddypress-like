@@ -1,4 +1,10 @@
 jQuery(document).ready( function() {
+	
+	jQuery('.author-box').each(function(){
+		var id = jQuery(this).attr('id');
+		jQuery(this).append( jQuery(id+' .like-box') );
+	});
+
 	jQuery('.like, .unlike, .like_blogpost, .unlike_blogpost').live('click', function() {
 		
 		var type = jQuery(this).attr('class');

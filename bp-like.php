@@ -158,7 +158,7 @@ function bp_like_install() {
 	if ( $current_settings['likers_visibility'] )
 		$likers_visibility = $current_settings['likers_visibility'];
 	else
-		$likers_visibility = 'friends_names_others_numbers';
+		$likers_visibility = 'show_all';
 
 	if ( $current_settings['name_or_avatar'] )
 		$name_or_avatar = $current_settings['name_or_avatar'];
@@ -419,9 +419,7 @@ function bp_like_add_user_like( $item_id = '', $type = 'activity' ) {
 
 		};
 	
-	endif;
-	
-	if ( $type == 'blogpost' ) :
+	elseif ( $type == 'blogpost' ) :
 		
 		/* Add to the users liked blog posts. */
 		$user_likes = get_user_meta( $user_id, 'bp_liked_blogposts', true);
@@ -540,9 +538,7 @@ function bp_like_remove_user_like( $item_id = '', $type = 'activity') {
 			)
 		);
 		
-	endif;
-
-	if ( $type == 'blogpost' ) :
+	elseif ( $type == 'blogpost' ) :
 		
 		/* Remove this from the users liked activities. */
 		$user_likes = get_user_meta( $user_id, 'bp_liked_blogposts', true );
@@ -608,13 +604,14 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 		/* Grab some core data we will need later on, specific to activities */
 		$users_who_like 	= array_keys( bp_activity_get_meta( $item_id, 'liked_count' ) );
 		$liked_count 		= count( bp_activity_get_meta( $item_id, 'liked_count' ) );
-		$users_friends 		= friends_get_friend_user_ids( $user_id );
-	
-		if ( !empty( $users_friends ) )
-			$friends_who_like = array_intersect( $users_who_like, $users_friends );
+		
+		/* Intercept any messages if nobody likes it, just incase the button was clicked when it shouldn't be */
+		if ( $liked_count == 0 ) :
+			
+			$output .= 'Nobody '.bp_like_get_text( 'get_likes_likes_this' );
 		
 		/* We should show information about all likers */
-		if ( bp_like_get_settings( 'likers_visibility' ) == 'show_all' ) :
+		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'show_all' ) :
 			
 			/* Settings say we should show their name. */
 			if ( bp_like_get_settings( 'name_or_avatar' ) == 'name' ) :
@@ -664,8 +661,13 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 			endif;
 		
 		/* We should show the information of friends, but only the number of non-friends. */
-		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' ) :
-
+		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' && bp_is_active( 'friends' ) ) :
+			
+			/* Grab some information about their friends. */
+			$users_friends 		= friends_get_friend_user_ids( $user_id );
+			if ( !empty( $users_friends ) )
+				$friends_who_like = array_intersect( $users_who_like, $users_friends );
+			
 			/* Current user likes it too, remove them from the liked count. */
 			if ( bp_like_is_liked( $item_id, 'activity', $user_id ) )
 				$liked_count = $liked_count-1;
@@ -726,8 +728,10 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 			
 					foreach( $users_who_like as $id ) :
 					
-						if ( $id == $user_id || in_array( $id, $friends_who_like ) )
-							$output .= '<a href="' . bp_core_get_user_domain( $id ) . '" title="' . bp_core_get_user_displayname( $id ) . '">' . bp_core_fetch_avatar( array( 'item_id' => $id, 'object' => 'user', 'type' => 'thumb', 'width' => 30, 'height' => 30 ) ) . '</a> ';
+						if ( $id == $user_id || in_array( $id, $friends_who_like ) ) {
+							$user_info = get_userdata( $id );
+							$output .= '<a href="' . bp_core_get_user_domain( $id ) . '" title="' . bp_core_get_user_displayname( $id ) . '">' . get_avatar( $user_info->user_email, 30 ) . '</a> ';
+						}
 					
 					endforeach;
 				
@@ -735,7 +739,7 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 				
 			endif;
 		
-		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'just_numbers' ) :
+		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'just_numbers' || bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' && !bp_is_active( 'friends' ) ) :
 			
 				/* Current user likes it too, remove them from the liked count and output appropriate message */
 				if ( bp_like_is_liked( $item_id, 'activity', $user_id ) ) :
@@ -779,12 +783,15 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
  *
  */
 function bp_like_button( $id = '', $type = '' ) {
-
+	
 	$users_who_like = 0;
 	$liked_count = 0;
-
-	if ( !$type )
+	
+	/* Set the type if not already set, and check whether we are outputting the button on a blogpost or not. */
+	if ( !$type && !is_single() )
 		$type = 'activity';
+	elseif ( !$type && is_single() )
+		$type = 'blogpost';
 	
 	if ( $type == 'activity' ) :
 	
@@ -812,6 +819,10 @@ function bp_like_button( $id = '', $type = '' ) {
 		endif;
 	
 	elseif ( $type == 'blogpost' ) :
+		global $post;
+		
+		if ( !$id && is_single() )
+			$id = $post->ID;
 		
 		if ( is_user_logged_in() && get_post_meta( $id, 'liked_count', true ) ) {
 			$liked_count = count( get_post_meta( $id, 'liked_count', true ) );
@@ -819,16 +830,17 @@ function bp_like_button( $id = '', $type = '' ) {
 		
 		if ( !bp_like_is_liked( $id, 'blogpost' ) ) : ?>
 		
-		<a href="#" class="like_blogpost" id="like-blogpost-<?php echo $id; ?>" title="<?php echo bp_like_get_text( 'like_this_item' ); ?>"><?php echo bp_like_get_text( 'like' ); if ( $liked_count ) echo ' (' . $liked_count . ')'; ?></a>
+		<div class="like-box"><a href="#" class="like_blogpost" id="like-blogpost-<?php echo $id; ?>" title="<?php echo bp_like_get_text( 'like_this_item' ); ?>"><?php echo bp_like_get_text( 'like' ); if ( $liked_count ) echo ' (' . $liked_count . ')'; ?></a></div>
 		
 		<?php else : ?>
 		
-		<a href="#" class="unlike_blogpost" id="unlike-blogpost-<?php echo $id; ?>" title="<?php echo bp_like_get_text( 'unlike_this_item' ); ?>"><?php echo bp_like_get_text( 'unlike' ); if ( $liked_count ) echo ' (' . $liked_count . ')'; ?></a>
+		<div class="like-box"><a href="#" class="unlike_blogpost" id="unlike-blogpost-<?php echo $id; ?>" title="<?php echo bp_like_get_text( 'unlike_this_item' ); ?>"><?php echo bp_like_get_text( 'unlike' ); if ( $liked_count ) echo ' (' . $liked_count . ')'; ?></a></div>
 		<?php endif;
 
 	endif;
 };
-add_filter('bp_activity_entry_meta', 'bp_like_button');
+add_filter( 'bp_activity_entry_meta', 'bp_like_button' );
+add_action( 'bp_before_blog_single_post', 'bp_like_button' );
 
 /**
  * bp_like_activity_filter()
@@ -869,9 +881,7 @@ function bp_like_insert_head() {
 ?>
 <style type="text/css">
 	.bp-like.activity_liked .activity-meta,
-	.bp-like.activity_liked .view,
 	.bp-like.blogpost_liked .activity-meta,
-	.bp-like.blogpost_liked .view,
 	.users-who-like,
 	.mini a.view-likes,
 	.mini a.hide-likes {
@@ -911,14 +921,39 @@ function bp_like_insert_head() {
 		padding: 0;
 		margin: 0;
 	}
+	ul#activity-stream li.bp-like .activity-inner {
+		border-left: 3px solid #ddd;
+		color: #888;
+		padding-left: 15px;
+		font-style: italic;
+	}
+	#bp-default div.post div.author-box, div.comment-avatar-box {
+	position: relative;
+	}
+	#bp-default div.like-box {
+		background: #f0f0f0;
+		width: 90px;
+		position: absolute;
+		bottom: -40px;
+		left: 0;
+		font-family: georgia, times, serif;
+		font-style: italic;
+		text-align: center;
+		padding: 5px 0;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+	}
 </style>
 <script type="text/javascript">
+/* <![CDATA[ */
 	var bp_like_terms_like = '<?php echo bp_like_get_text( 'like' ); ?>';
 	var bp_like_terms_like_message = '<?php echo bp_like_get_text( 'like_this_item' ); ?>';
 	var bp_like_terms_unlike_message = '<?php echo bp_like_get_text( 'unlike_this_item' ); ?>';
 	var bp_like_terms_view_likes = '<?php echo bp_like_get_text( 'view_likes' ); ?>';
 	var bp_like_terms_hide_likes = '<?php echo bp_like_get_text( 'hide_likes' ); ?>';
 	var bp_like_terms_unlike_1 = '<?php echo bp_like_get_text( 'unlike' ); ?> (1)';
+/* ]]> */
 </script>
 <?php	
 }
@@ -1030,7 +1065,9 @@ jQuery(document).ready( function() {
     <p><?php _e("Choose how much information about the 'likers' of a particular item is shown;", "buddypress-like"); ?></p>
     <p style="line-height: 200%;">
       <input type="radio" name="bp_like_admin_likers_visibility" value="show_all"<?php if ( bp_like_get_settings( 'likers_visibility' ) == 'show_all' ) { echo ' checked="checked""'; }; ?> /> Show <select name="name_or_avatar" class="name-or-avatar"><option value="name"<?php if ( bp_like_get_settings( 'name_or_avatar' ) == 'name' ) { echo ' selected="selected""'; }; ?>>names</option><option value="avatar"<?php if ( bp_like_get_settings( 'name_or_avatar' ) == 'avatar' ) { echo ' selected="selected""'; }; ?>>avatars</option></select> of all likers<br />
+      <?php if ( bp_is_active( 'friends' ) ) { ?>
       <input type="radio" name="bp_like_admin_likers_visibility" value="friends_names_others_numbers"<?php if ( bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' ) { echo ' checked="checked""'; }; ?> /> Show <select name="name_or_avatar" class="name-or-avatar"><option value="name"<?php if ( bp_like_get_settings( 'name_or_avatar' ) == 'name' ) { echo ' selected="selected""'; }; ?>>names</option><option value="avatar"<?php if ( bp_like_get_settings( 'name_or_avatar' ) == 'avatar' ) { echo ' selected="selected""'; }; ?>>avatars</option></select> of friends, and the number of non-friends<br />
+      <?php }; ?>
       <input type="radio" name="bp_like_admin_likers_visibility" value="just_numbers"<?php if ( bp_like_get_settings( 'likers_visibility' ) == 'just_numbers' ) { echo ' checked="checked""'; }; ?> /> <?php _e('Show only the number of likers', 'buddypress-like'); ?>
     </p>
     <h3><?php _e('Custom Messages', 'buddypress-like'); ?></h3>
@@ -1057,7 +1094,7 @@ jQuery(document).ready( function() {
       <?php endforeach; ?>
       </tbody>
     </table>
-
+	
     <p class="submit">
       <input class="button-primary" type="submit" name="bp-like-admin-submit" id="bp-like-admin-submit" value="<?php _e('Save Changes', 'wordpress'); ?>"/>
     </p>

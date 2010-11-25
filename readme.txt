@@ -1,19 +1,18 @@
 === Plugin Name ===
 Contributors: hempsworth
+Donate link: http://buddypress.org/community/groups/buddypress-like/donate/
 Tags: buddypress, like, rate, thumbs
 Requires at least: 2.9
-Tested up to: 2.9.1
-Stable tag: 0.0.7
+Tested up to: 3.0.1
+Stable tag: 0.0.8
 
-Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
+Gives users of a BuddyPress site the ability to 'like' activities and blog posts.
 
 == Description ==
 
 <strong>Requires <a href="http://wordpress.org/extend/plugins/buddypress/">BuddyPress 1.2</a> or higher.</strong>
 
-Adds a 'Like' button to activities in the stream, allowing users to 'like' the item and see who else has done the same.
-
-Updates are constantly being made, and feature requests are more than welcome!
+Allows users to 'Like' activities in BuddyPress, as well as blog posts.
 
 == Installation ==
 
@@ -29,12 +28,25 @@ Updates are constantly being made, and feature requests are more than welcome!
 1. Upload `buddypress-like` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
+= Add the 'Like' Button to Blog Posts =
+You need to edit your theme and include the following snippet within the loop to show the 'Like' button:
+`<?php bp_like_button( get_the_ID(), 'blogpost' ) ?>`
+
+If you are using the default BuddyPress theme, place that code inside the `<div class="author-box"></div>` found in `archive.php`, `index.php` and `single.php`.
+
 == Changelog ==
+
+= 0.0.8 =
+* Adds support for liking blog posts (themes need to be edited to take advantage of this).
+* Adds support for showing excerpts of the liked activity.
+* Adds support for showing avatars of likers as well as their name.
+* Adds the option whether to post an activity update when something is liked or not.
+* Optimises the db, removing empty rows.
 
 = 0.0.7 =
 * Fixes a couple of major bugs
 * Bug fixed: Posts, drafts etc would not be saved, giving error "You do not have permission to do that."
-* Bug fixed: Could not save 'Likers Visibility' options from the BuddyPress Like settings screen
+* Bug fixed: Could not save 'Likers Visibility' options from the BuddyPress Like settings screen.
 
 = 0.0.6 =
 * Fully localised.
@@ -54,6 +66,10 @@ Updates are constantly being made, and feature requests are more than welcome!
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.0.8 =
+This is a major update which is recommended for all users; adding features which have been requested for a long time.
+You can now 'Like' blog posts, show avatars of likers, and output a short excerpt of the activity that has been liked. There are also new options for administrators, as well as database optimisations.
 
 = 0.0.7 =
 Important upgrade! Fixes a couple of major bugs affecting saving posts, drafts etc (giving error "You do not have permission to do that.") and the saving of 'Likers Visibility' options
