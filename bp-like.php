@@ -2,10 +2,10 @@
 /*
 Plugin Name: BuddyPress Like
 Plugin URI: http://bplike.wordpress.com
-Description: Gives users of a BuddyPress site the ability to 'like' activities, and soon other social elements of the site.
+Description: Gives users the ability to 'like' content accross your BuddyPress enabled site.
 Author: Alex Hempton-Smith
-Version: 0.0.8-beta
-Author URI: http://www.alexhemptonsmith.com
+Version: 0.0.8
+Author URI: http://bplike.wordpress.com
 */
 
 /* Make sure BuddyPress is loaded before we do anything. */
@@ -21,8 +21,8 @@ if ( !function_exists( 'bp_core_install' ) ) {
 	}
 }
 
-define ( 'BP_LIKE_VERSION', '0.0.8-beta' );
-define ( 'BP_LIKE_DB_VERSION', '8' );
+define ( 'BP_LIKE_VERSION', '0.0.8' );
+define ( 'BP_LIKE_DB_VERSION', '10' );
 
 /**
  * bp_like_install()
@@ -80,29 +80,41 @@ function bp_like_install() {
 				'default'	=> __('%user% likes %author%\'s <a href="%permalink%">activity</a>', 'buddypress-like'),
 				'custom'	=> __('%user% likes %author%\'s <a href="%permalink%">activity</a>', 'buddypress-like')
 			),
-			'record_activity_likes_blogpost' => array(
-				'default'	=> __('%user% likes a blog post by %author%: <a href="%permalink%">%title%</a>', 'buddypress-like'),
-				'custom'	=> __('%user% likes a blog post by %author%: <a href="%permalink%">%title%</a>', 'buddypress-like')
+			'record_activity_likes_own_blogpost' => array(
+				'default'	=> __('%user% likes their own blog post, <a href="%permalink%">%title%</a>', 'buddypress-like'),
+				'custom'	=> __('%user% likes their own blog post, <a href="%permalink%">%title%</a>', 'buddypress-like')
+			),
+			'record_activity_likes_a_blogpost' => array(
+				'default'	=> __('%user% likes a blog post, <a href="%permalink%">%title%</a>', 'buddypress-like'),
+				'custom'	=> __('%user% likes an blog post, <a href="%permalink%">%title%</a>', 'buddypress-like')
+			),
+			'record_activity_likes_users_blogpost' => array(
+				'default'	=> __('%user% likes %author%\'s blog post, <a href="%permalink%">%title%</a>', 'buddypress-like'),
+				'custom'	=> __('%user% likes %author%\'s blog post, <a href="%permalink%">%title%</a>', 'buddypress-like')
+			),
+			'get_likes_no_likes' => array(
+				'default'	=> __('Nobody likes this yet.', 'buddypress-like'),
+				'custom'	=> __('Nobody likes this yet.', 'buddypress-like')
 			),
 			'get_likes_only_liker' => array(
 				'default'	=> __('You are the only person who likes this so far.', 'buddypress-like'),
 				'custom'	=> __('You are the only person who likes this so far.', 'buddypress-like')
 			),
 			'get_likes_you_and_singular' => array(
-				'default'	=> __('You and %count% other person like this', 'buddypress-like'),
-				'custom'	=> __('You and %count% other person like this', 'buddypress-like')
+				'default'	=> __('You and %count% other person like this.', 'buddypress-like'),
+				'custom'	=> __('You and %count% other person like this.', 'buddypress-like')
 			),
 			'get_likes_you_and_plural' => array(
 				'default'	=> __('You and %count% other people like this', 'buddypress-like'),
 				'custom'	=> __('You and %count% other people like this', 'buddypress-like')
 			),
 			'get_likes_count_people_singular' => array(
-				'default'	=> __('%count% person likes this', 'buddypress-like'),
-				'custom'	=> __('%count% person likes this', 'buddypress-like')
+				'default'	=> __('%count% person likes this.', 'buddypress-like'),
+				'custom'	=> __('%count% person likes this.', 'buddypress-like')
 			),
 			'get_likes_count_people_plural' => array(
-				'default'	=> __('%count% people like this', 'buddypress-like'),
-				'custom'	=> __('%count% people like this', 'buddypress-like')
+				'default'	=> __('%count% people like this.', 'buddypress-like'),
+				'custom'	=> __('%count% people like this.', 'buddypress-like')
 			),
 			'get_likes_and_people_singular' => array(
 				'default'	=> __('and %count% other person like this.', 'buddypress-like'),
@@ -204,8 +216,8 @@ function bp_like_install() {
 /* The notice we show when the plugin is installed. */
 function bp_like_install_buddypress_notice() {
 
-	echo '<div id="message" class="error fade bp-like-upgraded"><p style="line-height: 150%">';
-	_e('<strong>BuddyPress Like</strong></a> requires the BuddyPress plugin to work. Please <a href="http://buddypress.org/download">install BuddyPress</a> first, or <a href="plugins.php">deactivate BuddyPress Like</a>.', 'buddypress-like');
+	echo '<div id="message" class="error fade"><p style="line-height: 150%">';
+	_e('<strong>BuddyPress Like</strong></a> requires the BuddyPress plugin to work. Please <a href="http://buddypress.org">install BuddyPress</a> first, or <a href="plugins.php">deactivate BuddyPress Like</a>.', 'buddypress-like');
 	echo '</p></div>';
 
 }
@@ -216,7 +228,7 @@ function bp_like_updated_notice() {
 	if ( !is_site_admin() )
 		return false;
 	
-	echo '<div id="message" class="updated fade bp-like-upgraded"><p style="line-height: 150%">';
+	echo '<div id="message" class="updated fade"><p style="line-height: 150%">';
 	printf(__('<strong>BuddyPress Like</strong> has been successfully updated to version %s.', 'buddypress-like'), BP_LIKE_VERSION);
 	echo '</p></div>';
 
@@ -435,13 +447,19 @@ function bp_like_add_user_like( $item_id = '', $type = 'activity' ) {
 		
 		if ( bp_like_get_settings( 'post_to_activity_stream' ) == 1 ) {
 			$post = get_post($item_id);
-			$author_id = $activity['activities'][0]->user_id;
+			$author_id = $post->post_author;
 	
 			$liker = bp_core_get_userlink( $user_id );
 			$permalink = get_permalink( $item_id );
 			$title = $post->post_title;
 			$author = bp_core_get_userlink( $post->post_author );
-			$action = bp_like_get_text( 'record_activity_likes_blogpost' );
+
+			if ($user_id == $author_id)
+				$action = bp_like_get_text( 'record_activity_likes_own_blogpost' );
+			elseif ($user_id == 0)
+				$action = bp_like_get_text( 'record_activity_likes_a_blogpost' );
+			else
+				$action = bp_like_get_text( 'record_activity_likes_users_blogpost' );
 	
 			/* Filter out the placeholders */
 			$action = str_replace( '%user%', $liker, $action );
@@ -608,7 +626,7 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 		/* Intercept any messages if nobody likes it, just incase the button was clicked when it shouldn't be */
 		if ( $liked_count == 0 ) :
 			
-			$output .= 'Nobody '.bp_like_get_text( 'get_likes_likes_this' );
+			$output .= bp_like_get_text( 'get_likes_no_likes' );
 		
 		/* We should show information about all likers */
 		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'show_all' ) :
@@ -664,46 +682,26 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' && bp_is_active( 'friends' ) ) :
 			
 			/* Grab some information about their friends. */
-			$users_friends 		= friends_get_friend_user_ids( $user_id );
+			$users_friends = friends_get_friend_user_ids( $user_id );
 			if ( !empty( $users_friends ) )
 				$friends_who_like = array_intersect( $users_who_like, $users_friends );
 			
-			/* Current user likes it too, remove them from the liked count. */
+			/* Current user likes it, so reduce the liked count by 1, to get the number of other people who like it. */
 			if ( bp_like_is_liked( $item_id, 'activity', $user_id ) )
 				$liked_count = $liked_count-1;
-		
-			if ( empty( $friends_who_like ) ) :
-					
-				if ( bp_like_is_liked( $item_id, 'activity', $user_id ) ) :
-					
-					if ( $liked_count == 1 )
-						$output .= bp_like_get_text( 'get_likes_no_friends_you_and_singular' );
-					else
-						$output .= bp_like_get_text( 'get_likes_no_friends_you_and_plural' );
-				
-				else :
-					
-					if ( $liked_count == 1 )
-						$output .= bp_like_get_text( 'get_likes_no_friends_singular' );
-					else
-						$output .= bp_like_get_text( 'get_likes_no_friends_plural' );
-				
-				endif;
-					
-			endif;
 			
 			/* Settings say we should show their names. */
 			if ( bp_like_get_settings( 'name_or_avatar' ) == 'name' ) :
 					
 					/* Current user likes it too, tell them. */
 					if ( bp_like_is_liked( $item_id, 'activity', $user_id ) )
-						$output .= '<a href="' . bp_core_get_user_domain( $user_id ) . '">You</a> &middot ';
-
+						$output .= 'You ';
+				
 					/* Output the name of each friend who has liked it. */
 					foreach( $users_who_like as $id ) :
 					
 						if ( in_array( $id, $friends_who_like ) ) {
-							$output .= '<a href="' . bp_core_get_user_domain( $id ) . '" title="' . bp_core_get_user_displayname( $id ) . '">' . bp_core_get_user_displayname( $id ) . '</a>  &middot ';
+							$output .= ' &middot <a href="' . bp_core_get_user_domain( $id ) . '" title="' . bp_core_get_user_displayname( $id ) . '">' . bp_core_get_user_displayname( $id ) . '</a> ';
 						
 							$liked_count = $liked_count-1;
 						}
@@ -739,7 +737,7 @@ function bp_like_get_likes( $item_id = '', $type = '', $user_id = '' ) {
 				
 			endif;
 		
-		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'just_numbers' || bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' && !bp_is_active( 'friends' ) ) :
+		elseif ( bp_like_get_settings( 'likers_visibility' ) == 'friends_names_others_numbers' && !bp_is_active( 'friends' ) ||bp_like_get_settings( 'likers_visibility' ) == 'just_numbers' ) :
 			
 				/* Current user likes it too, remove them from the liked count and output appropriate message */
 				if ( bp_like_is_liked( $item_id, 'activity', $user_id ) ) :

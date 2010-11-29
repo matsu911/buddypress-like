@@ -4,15 +4,15 @@ Donate link: http://buddypress.org/community/groups/buddypress-like/donate/
 Tags: buddypress, like, rate, thumbs
 Requires at least: 2.9
 Tested up to: 3.0.1
-Stable tag: 0.0.7
+Stable tag: 0.0.8
 
-Gives users of a BuddyPress site the ability to 'like' activities and blog posts.
+Gives users the ability to 'like' content across your BuddyPress enabled site.
 
 == Description ==
 
-<strong>Requires <a href="http://wordpress.org/extend/plugins/buddypress/">BuddyPress 1.2</a> or higher.</strong>
+Gives users the ability to 'like' content across your BuddyPress enabled site.
 
-Allows users to 'Like' activities in BuddyPress.
+(Requires <a href="http://wordpress.org/extend/plugins/buddypress/">BuddyPress 1.2</a> or higher.)
 
 == Installation ==
 
@@ -29,6 +29,14 @@ Allows users to 'Like' activities in BuddyPress.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Changelog ==
+
+= 0.0.8 =
+* New feature: blog posts can now be liked.
+* New feature: you can no show an excerpt of the liked content.
+* Option added: disable posting likes to the activity stream.
+* Option added: show avatars of likers instead of names.
+* Bug fixed: activity updates of likes are now deleted when the item is unliked.
+* Bug fixed: plugin would break if the Friends component was disabled.
 
 = 0.0.7 =
 * Fixes a couple of major bugs
@@ -53,6 +61,9 @@ Allows users to 'Like' activities in BuddyPress.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.0.8 =
+The biggest update yet! Lots of new features, including the ability to like blog posts. Recommended for all users.
 
 = 0.0.7 =
 Important upgrade! Fixes a couple of major bugs affecting saving posts, drafts etc (giving error "You do not have permission to do that.") and the saving of 'Likers Visibility' options
