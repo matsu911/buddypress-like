@@ -58,7 +58,7 @@ Gives users the ability to 'like' content across your BuddyPress enabled site.
 * Fixed a bug affecting installs where WP isn’t in the root of the site.
 
 = 0.0.1 =
-* Initial release.
+* Initial release..
 
 == Upgrade Notice ==
 
