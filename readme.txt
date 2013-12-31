@@ -80,6 +80,9 @@ Requires <a href="http://wordpress.org/plugins/buddypress/">BuddyPress</a>
 
 == Upgrade Notice ==
 
+= 0.1.1 =
+A few awesome fixes! Comments should now work properly.
+
 = 0.0.8 =
 The biggest update yet! Lots of new features, including the ability to like blog posts. Recommended for all users.
 
