@@ -12,6 +12,8 @@ Text Domain: bp-like
 Credit: The original plugin was built by Alex Hempton-Smith who did a great job. I hope he's in good
 health and enjoying life.
 */
+// Exit if accessed directly
+if ( !defined( 'ABSPATH' ) ) exit;
 
 /* Only load code that needs BuddyPress to run once BP is loaded and initialized. */
 function bplike_init() {

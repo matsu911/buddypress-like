@@ -1,10 +1,10 @@
-=== Plugin Name ===
+﻿=== BuddyPress Like ===
 Contributors: darrenmeehan,hempsworth
 Donate link: http://buddypress.org/community/groups/buddypress-like/donate/
 Tags: buddypress, like, rate, thumbs, Post, button
 Requires at least: 3.8
 Tested up to: 3.8
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 
 Gives users the ability to 'like' content across your BuddyPress enabled site. Note BuddyPress Like is currently in Beta.
 
@@ -13,7 +13,7 @@ Gives users the ability to 'like' content across your BuddyPress enabled site. N
 Gives users the ability to 'like' content across your BuddyPress enabled site. Note BuddyPress Like is currently in Beta.
 While development will be based on Github, for now many updates will be uploaded to WordPress.org for ease of access for the people who want the most up to date version.
 
-Requires <a href="http://wordpress.org/plugins/buddypress//">BuddyPress</a>
+Requires <a href="http://wordpress.org/plugins/buddypress/">BuddyPress</a>
 
 == Installation ==
 
@@ -31,6 +31,14 @@ Requires <a href="http://wordpress.org/plugins/buddypress//">BuddyPress</a>
 
 == Changelog ==
 
+= 0.1.1
+* Fixed errors in readme.txt
+* Started formating code to meet WordPress code Standards
+* Add in View Likes, until some bugs are fixed.
+* View Likes should now be working in comments.
+* Minified JavaScript.
+* Several other small fixes.
+
 = 0.1.0 =
 * Tidied up Admin Panel.
 * Removed bp_like_insert_head() as it's not needed anymore thanks to BuddyPress' theme compatibility.
@@ -39,7 +47,6 @@ Requires <a href="http://wordpress.org/plugins/buddypress//">BuddyPress</a>
 
 = 0.0.9 =
 * Bug fixed: updates deprecated WordPress functions.
-
 
 = 0.0.8 =
 * New feature: blog posts can now be liked.
