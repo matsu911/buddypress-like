@@ -31,7 +31,7 @@ Requires <a href="http://wordpress.org/plugins/buddypress/">BuddyPress</a>
 
 == Changelog ==
 
-= 0.1.1
+= 0.1.1 =
 * Fixed errors in readme.txt
 * Started formating code to meet WordPress code Standards
 * Add in View Likes, until some bugs are fixed.
