@@ -3,8 +3,8 @@ Contributors: darrenmeehan,hempsworth
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZAJLLEJDBHAWL
 Tags: buddypress, like, rate, thumbs, Post, button
 Requires at least: 3.8
-Tested up to: 3.8
-Stable tag: 0.1.5
+Tested up to: 3.9
+Stable tag: 0.1.6
 
 Gives users the ability to 'like' content across your BuddyPress enabled site. Note BuddyPress Like is currently in Beta.
 
@@ -30,6 +30,10 @@ Requires <a href="http://wordpress.org/plugins/buddypress/">BuddyPress</a>
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Changelog ==
+
+= 0.1.6 =
+* Fixed bug when displaying number of people who liked.
+* Fixed bug with jQuery not working after loading more statuses.
 
 = 0.1.5 =
 * Removed favorite/unfavorite button on activity items using jQuery. 

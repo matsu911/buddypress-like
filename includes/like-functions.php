@@ -259,6 +259,26 @@ function bp_like_remove_user_like( $item_id = '' , $type = 'activity' ) {
 }
 
 /**
+*
+* bp_like_number_of_likers()
+* 
+* Paramter: Takes in ID of item.
+*
+* Outputs the number of users who have liked a given item.
+*/
+function bp_like_number_of_likers($item_id ='') {
+
+    global $bp;
+    /* Grab some core data we will need later on, specific to activities */
+    $users_who_like = array_keys( bp_activity_get_meta( $item_id , 'liked_count' ) );
+    $number_of_likers = count( bp_activity_get_meta( $item_id , 'liked_count' ) );
+
+    return $number_of_likers;
+
+}
+
+
+/**
  * bp_like_get_likes()
  *
  * Outputs a list of users who have liked a given item.
@@ -430,6 +450,7 @@ function bp_like_get_likes( $item_id = '' , $type = '' , $user_id = '' ) {
  */
 function bp_like_users_who_like( $bp_like_id = '' ) {
     $bp_like_id = bp_get_activity_id();
+
     $users_who_like = array_keys( bp_activity_get_meta( $bp_like_id , 'liked_count' , true ) );
     if ( count( $users_who_like ) == 1 ) {
         echo bp_core_get_userlink( $users_who_like[0] , $no_anchor = false , $just_link = false ) . _e( 'liked this' , 'bp-like' );
@@ -448,7 +469,7 @@ function bp_like_users_who_like( $bp_like_id = '' ) {
  * Description: Returns a defined number of likers, beginning with more recent.
  * 
  * TODO: Use this function throughout plugin where needed.
- * Check if user liked item and andd "You, x,y, and z others liked this".
+ * Check if user liked item and "You, x,y, and z others liked this".
  */
 function bp_like_get_some_likes( $number = '' ) {
     
@@ -456,8 +477,12 @@ function bp_like_get_some_likes( $number = '' ) {
     // need to decide if checking number of likes here, or in another fucntion, or in call to here..
     $bp_like_id = bp_get_activity_id();
     $users_who_like = array_keys( bp_activity_get_meta( $bp_like_id , 'liked_count' , true ) );
-
-    if ( count( $users_who_like ) == 1 ) {
+    
+    if ( count( $users_who_like ) == 0 ) {
+    // if no user likes this.    
+}
+    elseif ( count( $users_who_like ) == 1 ) {
+        // If only one person likes the current item.
 
         $string = '<p class="users-who-like" id="users-who-like-';
         $string .= $bp_like_id;
@@ -466,8 +491,10 @@ function bp_like_get_some_likes( $number = '' ) {
         $one = bp_core_get_userlink( $users_who_like[0] );
 
         printf( $string , $one );
-    } elseif ( count( $users_who_like ) == 2 ) {
 
+
+    } elseif ( count( $users_who_like ) == 2 ) {
+        // If two people like the current item.
 
         $string = '<p class="users-who-like" id="users-who-like-';
         $string .= $bp_like_id;
@@ -477,15 +504,19 @@ function bp_like_get_some_likes( $number = '' ) {
         $two = bp_core_get_userlink( $users_who_like[1] );
 
         printf( $string , $one , $two );
-    } else {
+
+    } elseif ( count ($users_who_like) > 2 ) {
+
         $string = '<p class="users-who-like" id="users-who-like-';
         $string .= $bp_like_id;
-        $string .= '">%s, %s and %s liked this.</p>';
+        $string .= '">%s, %s and %s others liked this.</p>';
 
         $others = count ($users_who_like);
         // output last two people to like (2 at end of array)
         $one = bp_core_get_userlink( $users_who_like[0] );
         $two = bp_core_get_userlink( $users_who_like[1] );
+
+        // $users_who_like will always be greater than 2.
         if ( $users_who_like == 3 ) {
             $others = $others - 1;
         } else {
@@ -504,7 +535,7 @@ function bp_like_get_some_likes( $number = '' ) {
  *  * 
  */
 function view_who_likes() {
-    do_action( 'view_who_likes' );
+    do_action( 'view_who_likes');
 }
 
-add_action( 'view_who_likes' , 'bp_like_get_some_likes' );
+add_action( 'view_who_likes' , 'bp_like_get_some_likes', 1000 );

@@ -29,9 +29,10 @@ function bp_like_button( $id = '' , $type = '' ) {
     }
 }
 
-add_filter( 'bp_activity_entry_meta' , 'bp_like_button' );
-add_action( 'bp_before_blog_single_post' , 'bp_like_button' );
-add_filter( 'bp_activity_comment_options' , 'bp_like_button' );
+// Filters to display BuddyPress Like button.
+add_filter( 'bp_activity_entry_meta' , 'bp_like_button', 1000 );
+add_action( 'bp_before_blog_single_post' , 'bp_like_button' , 1000 );
+add_filter( 'bp_activity_comment_options' , 'bp_like_button', 1000 );
 
 /*
  * bplike_activity_button()
@@ -44,6 +45,9 @@ add_filter( 'bp_activity_comment_options' , 'bp_like_button' );
  */
 
 function bplike_activity_button() {
+
+    // Debugging.
+    // echo bp_get_activity_type();
 
     $liked_count = 0;
     $bp_like_comment_id = bp_get_activity_comment_id();
@@ -69,6 +73,10 @@ function bplike_activity_button() {
             $bp_like_css = 'acomment-reply bp-primary-action like';
         }
     }
+
+    // Debugging.
+    //print_r( bp_activity_get_meta( $bp_like_id , 'liked_count' , true ));
+
 
     $activity = bp_activity_get_specific( array('activity_ids' => $bp_like_id) );
 
