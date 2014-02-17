@@ -477,9 +477,10 @@ function bp_like_get_some_likes( $number = '' ) {
     // need to decide if checking number of likes here, or in another fucntion, or in call to here..
     $bp_like_id = bp_get_activity_id();
     $users_who_like = array_keys( bp_activity_get_meta( $bp_like_id , 'liked_count' , true ) );
+
     
     if ( count( $users_who_like ) == 0 ) {
-    // if no user likes this.    
+    // if no user likes this.
 }
     elseif ( count( $users_who_like ) == 1 ) {
         // If only one person likes the current item.

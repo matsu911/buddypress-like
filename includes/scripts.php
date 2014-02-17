@@ -15,6 +15,10 @@ if ( !defined( 'ABSPATH' ) ) {
 function bp_like_list_scripts() {
     wp_register_script( 'bplike-jquery' , plugins_url( '/assets/js/bp-like.min.js' , dirname( __FILE__ ) ) , BP_LIKE_VERSION , array('jquery') );
     wp_enqueue_script( 'bplike-jquery' );
+
+    /* JQuery dialog for likers popup. */
+   /// wp_register_script('jquery-ui-dialog', array('jquery'));
+    wp_enqueue_script(' jquery-ui-dialog');
 }
 
 /**

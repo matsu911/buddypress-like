@@ -26,6 +26,7 @@ function bp_like_button( $id = '' , $type = '' ) {
         bplike_activity_button();
     } elseif ( $type == 'blogpost' ) {
         bplike_blog_button();
+        bp_get_activity_type();
     }
 }
 
@@ -41,7 +42,7 @@ add_filter( 'bp_activity_comment_options' , 'bp_like_button', 1000 );
  * 
  * TODO: Try to have one function for all. 
  * Make simplier.
- * Get type in a better way. (comment or activty item)
+ * Get type in a better way. (comment or activty item, etc)
  */
 
 function bplike_activity_button() {
@@ -82,6 +83,7 @@ function bplike_activity_button() {
 
     //TODO: I believe there is a bp core function for this.
     $activity_type = $activity['activities'][0]->type;
+    // Debugging.
     //print_r($activity);
 
     if ( $activity_type === null ) {
@@ -113,6 +115,7 @@ function bplike_activity_button() {
             <?php
         }
 
+        // Checking if there are users who like item.
         if ( $users_who_like ) {
             view_who_likes();
         }
