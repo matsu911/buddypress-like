@@ -16,6 +16,8 @@ function bp_like_list_scripts() {
     if( !is_admin()){
         wp_enqueue_script( 'bplike-jquery' );
 }
+    /* JQuery dialog for likers popup. */
+   wp_enqueue_script('jquery-ui-dialog');
 }
 
 /**
@@ -48,6 +50,5 @@ function bp_like_insert_head() {
     <?php
 }
 
-// TODO: only load these if user is logged in, test
 add_action( 'get_header' , 'bp_like_insert_head' );
 add_action( 'wp_print_scripts' , 'bp_like_list_scripts' );
