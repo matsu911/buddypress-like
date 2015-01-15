@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: buddypress, like, rate, thumbs, Post, button, vote
 Requires at least: 3.8
 Tested up to: 4.1
-Stable tag: 0.1.9
+Stable tag: 0.2
 
 Gives users the ability to 'like' content across your BuddyPress enabled site.
 
@@ -27,10 +27,12 @@ Gives users the ability to 'like' content across your BuddyPress enabled site.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 
 == Changelog ==
+= 0.2.0 = 
+* Added jQuery UI again.
 
 = 0.1.9 =
 * Renamed bp-like.dev.js to bp-like.js
-* Fixed parameters for wp_register_script(). Thanks tohttps://profiles.wordpress.org/ryanhellyer
+* Fixed parameters for wp_register_script(). Thanks to https://profiles.wordpress.org/ryanhellyer
 * Fixed PHP notice when a comment is liked. Thanks to https://profiles.wordpress.org/jasonthoele
 
 = 0.1.8 =
@@ -105,6 +107,9 @@ Gives users the ability to 'like' content across your BuddyPress enabled site.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 0.2.0 = 
+jQuery UI added back, which is required for some themes.
 
 = 0.1.9 =
 Some small fixes.

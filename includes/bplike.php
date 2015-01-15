@@ -5,11 +5,11 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 if ( !defined( 'BP_LIKE_VERSION' ) ) {
-    define( 'BP_LIKE_VERSION' , '0.1.9' );
+    define( 'BP_LIKE_VERSION' , '0.2.0' );
 }
 
 if ( !defined( 'BP_LIKE_DB_VERSION' ) ) {
-    define( 'BP_LIKE_DB_VERSION' , '23' );
+    define( 'BP_LIKE_DB_VERSION' , '24' );
 }
 
 if ( !defined( 'BPLIKE_PATH' ) ) {
