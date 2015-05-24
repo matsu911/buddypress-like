@@ -80,11 +80,12 @@ function bplike_activity_button() {
 
 
     $activity = bp_activity_get_specific( array('activity_ids' => $bp_like_id) );
-    $activity_type = $activity['activities'][0]->type;
+    if (!empty($activity['activities']))
+        $activity_type = $activity['activities'][0]->type;
     // Debugging.
     //print_r($activity);
 
-    if ( $activity_type === null ) {
+    if ( !isset($activity_type) || $activity_type === null ) {
         $activity_type = 'activity_update';
     }
 
