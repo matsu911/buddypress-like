@@ -34,7 +34,10 @@ function bp_like_post_to_stream( $item_id , $user_id ) {
     if ( bp_like_get_settings( 'post_to_activity_stream' ) == 1) {
 
         $activity = bp_activity_get_specific( array('activity_ids' => $item_id , 'component' => 'buddypress-like') );
-        $author_id = $activity['activities'][0]->user_id;
+        if ( !empty($activity['activities']) )
+            $author_id = $activity['activities'][0]->user_id;
+        if (!isset($author_id) || is_null($author_id))
+            $author_id = $user_id;
 
         if ( $user_id == $author_id ) {
             $action = bp_like_get_text( 'record_activity_likes_own' );
